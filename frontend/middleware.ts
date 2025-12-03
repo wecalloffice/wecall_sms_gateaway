@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token");
+export function middleware(req) {
+  const token = req.cookies.get("token")?.value;
+
+  const publicRoutes = ["/login"];
+
+  if (publicRoutes.includes(req.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
 
   if (!token) {
-     return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();
@@ -13,9 +18,8 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/dashboard/:path*",
     "/client/:path*",
-    "/platform/:path*",
     "/reseller/:path*",
-  ],
+    "/admin/:path*",
+  ]
 };
