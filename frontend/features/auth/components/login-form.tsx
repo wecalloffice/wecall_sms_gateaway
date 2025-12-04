@@ -86,10 +86,11 @@
 
 import { useState } from "react";
 import { useLogin } from "../hooks";
-import type { LoginPayload } from "../types";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const loginMutation = useLogin();
+  const router = useRouter();
 
   const [form, setForm] = useState<LoginPayload>({
     business_username: "",
@@ -145,11 +146,22 @@ export function LoginForm() {
         />
       </div>
 
-      {error && <p className="text-red-600 text-center text-sm">{error}</p>}
-      {loginMutation.isError && !error && (
-        <p className="text-red-600 text-center text-sm">
-          {(loginMutation.error as Error)?.message || "Login failed"}
-        </p>
+      <div className="flex justify-between items-center">
+        <button type="submit" className="btn-primary w-full">Login</button>
+      </div>
+
+      <div className="text-center mt-2">
+        <button
+          type="button"
+          className="text-sm text-blue-600 hover:underline"
+          onClick={() => router.push("/forgot-password")}
+        >
+          Forgot Password?
+        </button>
+      </div>
+
+      {loginMutation.isError && (
+        <p className="text-red-600 text-center mt-2">Invalid login credentials</p>
       )}
 
       <button type="submit" className="btn-primary w-full">
