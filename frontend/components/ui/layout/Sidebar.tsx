@@ -10,6 +10,7 @@ export default function Sidebar() {
     { label: "Dashboard", href: "/platform/dashboard" },
     { label: "Resellers", href: "/platform/resellers" },
     { label: "Clients", href: "/platform/clients" },
+    { label: "Billing", href: "/platform/billing" },  // <-- ADD THIS
   ];
 
   return (

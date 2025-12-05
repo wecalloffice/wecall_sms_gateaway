@@ -1,33 +1,21 @@
-import { LoginPayload, RegisterPayload } from "@/features/auth/types";
+"use server";
 
-const BASE_URL = "http://localhost:8000/api"; // update if needed
+import axios from "@/lib/axiosInstance";
 
-export async function login(payload: LoginPayload) {
-  const res = await fetch(`${BASE_URL}/auth/login/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    cache: "no-store",
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    throw new Error("Invalid credentials");
-  }
-
-  return res.json();
+export async function getWallet(businessId: string) {
+  const res = await axios.get(`/billing/wallet/${businessId}`);
+  return res.data;
 }
 
-export async function registerBusiness(payload: RegisterPayload) {
-  const res = await fetch(`${BASE_URL}/business/register/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    cache: "no-store",
-    body: JSON.stringify(payload),
+export async function getTransactions(businessId: string) {
+  const res = await axios.get(`/billing/transactions/${businessId}`);
+  return res.data;
+}
+
+export async function topUpWallet(businessId: string, amount: number) {
+  const res = await axios.post(`/billing/topup`, {
+    businessId,
+    amount,
   });
-
-  if (!res.ok) {
-    throw new Error("Registration failed");
-  }
-
-  return res.json();
+  return res.data;
 }
