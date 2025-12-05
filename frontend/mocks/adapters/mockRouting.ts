@@ -13,4 +13,3 @@ export const mockRouting = {
     return c;
   },
 };
->>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197
