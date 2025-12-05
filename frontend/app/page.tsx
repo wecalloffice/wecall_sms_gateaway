@@ -3,6 +3,7 @@
 import { FeaturesSection } from "@/components/ui/landing/FeaturesSection";
 import { Hero } from "@/components/ui/landing/Hero";
 import { Navbar } from "@/components/ui/landing/Navbar";
+import SendSmsForm from "@/features/sms/components/SendSmsForm";
 
 
 
@@ -13,6 +14,7 @@ export default function LandingPage() {
       <Navbar />
       <Hero />
       <FeaturesSection />
+
     </main>
   );
 }

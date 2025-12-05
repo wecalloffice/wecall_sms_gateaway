@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // mocks/adapters/mockSms.ts
 import { wecallMockData } from "../data/wecallMockData";
 import { mockBilling } from "./mockBilling";
@@ -72,5 +73,16 @@ export const mockSms = {
     });
 
     return { sid, price };
+=======
+import { wecallMockData } from "../data/wecallMockData";
+
+export const mockSms = {
+  list: async (business_sid) =>
+    wecallMockData.messages.filter((m) => m.business_sid === business_sid),
+
+  send: async (payload) => {
+    console.log("Mock SMS sent:", payload);
+    return { sid: "SM" + Math.floor(Math.random() * 999999) };
+>>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197
   },
 };

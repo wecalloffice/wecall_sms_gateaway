@@ -7,3 +7,8 @@ export const mockAccounts = {
       .find((r) => r.account_sid === reseller_sid)
       ?.clients || [],
 };
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197

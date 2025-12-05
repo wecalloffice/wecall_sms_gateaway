@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // mocks/adapters/mockBilling.ts
 import { wecallMockData } from "../data/wecallMockData";
 import type {
@@ -316,3 +317,16 @@ export const mockBilling = {
     return alerts;
   },
 };
+=======
+import { wecallMockData } from "../data/wecallMockData";
+
+export const mockBilling = {
+  wallet: async (business_sid) =>
+    wecallMockData.billing.wallets.find((w) => w.business_sid === business_sid),
+
+  transactions: async (business_sid) =>
+    wecallMockData.billing.transactions.filter(
+      (t) => t.business_sid === business_sid
+    ),
+};
+>>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197
