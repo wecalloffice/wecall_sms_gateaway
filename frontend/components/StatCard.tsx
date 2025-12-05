@@ -1,41 +1,60 @@
 "use client";
 
-import React from "react";
-import { LucideIcon } from "lucide-react";
+import { ReactNode } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface StatCardProps {
-  icon: LucideIcon;
+  icon: ReactNode;
   label: string;
   value: string | number;
-  change?: number;
-  bgColor?: string;
-  iconColor?: string;
+  change?: string;
+  className?: string;
 }
 
 export default function StatCard({
-  icon: Icon,
+  icon,
   label,
   value,
   change,
-  bgColor = "bg-blue-100",
-  iconColor = "text-blue-600",
+  className,
 }: StatCardProps) {
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between">
+    <Card
+      className={cn(
+        "border bg-white dark:bg-slate-800 shadow-sm transition-colors",
+        className
+      )}
+    >
+      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
         <div>
-          <p className="text-gray-600 text-sm font-medium">{label}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-2">{value}</p>
-          {change !== undefined && (
-            <p className={`text-sm mt-2 ${change >= 0 ? "text-green-600" : "text-red-600"}`}>
-              {change >= 0 ? "↑" : "↓"} {Math.abs(change)}%
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {label}
+          </CardTitle>
+
+          <p className="text-2xl font-bold mt-1 text-gray-900 dark:text-white">
+            {value}
+          </p>
+
+          {change && (
+            <p className="text-xs mt-2 font-medium text-green-600 dark:text-green-400">
+              {change}
             </p>
           )}
         </div>
-        <div className={`${bgColor} p-3 rounded-lg`}>
-          <Icon className={`${iconColor} w-6 h-6`} />
+
+        {/* Icon container */}
+        <div
+          className={cn(
+            "p-3 rounded-lg flex items-center justify-center",
+            "bg-[var(--primary-accent)]"
+          )}
+        >
+          {icon}
         </div>
-      </div>
-    </div>
+      </CardHeader>
+
+      <CardContent></CardContent>
+    </Card>
   );
 }
