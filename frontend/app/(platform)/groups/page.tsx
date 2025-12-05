@@ -181,6 +181,61 @@ export default function GroupsPage() {
             <p className="text-gray-500">No groups created yet. Create your first group!</p>
           </div>
         )}
+
+        {/* View Members Dialog */}
+        <Dialog open={isManageMembersOpen} onOpenChange={setIsManageMembersOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{selectedGroup?.name} - Members</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {selectedGroup && (
+                <>
+                  <div className="flex items-center justify-between pb-2 border-b">
+                    <div>
+                      <p className="text-sm text-gray-500">Total Members</p>
+                      <p className="text-2xl font-bold">{selectedGroup.contactIds.length}</p>
+                    </div>
+                    {selectedGroup.description && (
+                      <p className="text-sm text-gray-500 italic">{selectedGroup.description}</p>
+                    )}
+                  </div>
+                  
+                  <div className="max-h-96 overflow-y-auto space-y-2">
+                    {getContactsByIds(selectedGroup.contactIds).map((contact) => (
+                      <div 
+                        key={contact.id} 
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            {contact.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{contact.name}</p>
+                            <p className="text-sm text-gray-500">{contact.phone}</p>
+                            {contact.email && (
+                              <p className="text-xs text-gray-400">{contact.email}</p>
+                            )}
+                          </div>
+                        </div>
+                        {contact.company && (
+                          <Badge variant="outline">{contact.company}</Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {selectedGroup.contactIds.length === 0 && (
+                    <div className="text-center py-8 text-gray-400">
+                      No members in this group yet
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </MainLayout>
   );

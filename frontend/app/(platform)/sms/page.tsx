@@ -277,24 +277,37 @@ export default function SmsPage() {
                     <span>🕐</span> Recent Activity
                   </h3>
                   <div className="space-y-3">
-                    {smsLogs.slice(0, 5).map((log, idx) => (
-                      <div key={log.sid} className="flex items-start gap-3 text-sm">
-                        <div className={`w-2 h-2 rounded-full mt-1.5 ${
-                          log.status === "delivered" ? "bg-green-500" :
-                          log.status === "failed" ? "bg-red-500" : "bg-yellow-500"
-                        }`} />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-gray-900 truncate">{log.to}</p>
-                          <p className="text-xs text-gray-500">
-                            {new Date(log.created_at).toLocaleTimeString()}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    {smsLogs.length === 0 && (
+                    {!mounted ? (
+                      <p className="text-sm text-gray-400 text-center py-4">
+                        Loading activity...
+                      </p>
+                    ) : smsLogs.length === 0 ? (
                       <p className="text-sm text-gray-400 text-center py-4">
                         No recent activity
                       </p>
+                    ) : (
+                      smsLogs.slice(0, 5).map((log, idx) => {
+                        const contact = contacts.find(c => c.phone === log.to);
+                        const displayName = contact ? contact.name : log.to;
+                        
+                        return (
+                          <div key={log.sid} className="flex items-start gap-3 text-sm">
+                            <div className={`w-2 h-2 rounded-full mt-1.5 ${
+                              log.status === "delivered" ? "bg-green-500" :
+                              log.status === "failed" ? "bg-red-500" : "bg-yellow-500"
+                            }`} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-gray-900 truncate font-medium">{displayName}</p>
+                              {contact && (
+                                <p className="text-xs text-gray-400 truncate">{log.to}</p>
+                              )}
+                              <p className="text-xs text-gray-500">
+                                {new Date(log.created_at).toLocaleTimeString()}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 </Card>
