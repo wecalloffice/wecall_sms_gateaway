@@ -51,6 +51,7 @@ interface SmsStore {
   smsLogs: SmsLog[];
   senderIds: SenderId[];
   balance: number;
+  smsCostPerMessage: number;
 
   // Contact Actions
   addContact: (contact: Omit<Contact, "id" | "createdAt">) => Contact;
@@ -75,6 +76,10 @@ interface SmsStore {
     senderId: string;
   }) => Promise<SmsLog>;
   getSmsLogs: () => SmsLog[];
+
+  // Balance Actions
+  rechargeBalance: (amount: number) => void;
+  getBalance: () => number;
 
   // Sender ID Actions
   addSenderId: (senderId: string) => SenderId;
@@ -162,7 +167,8 @@ export const useSmsStore = create<SmsStore>()(
         { id: "sid1", senderId: "WeCall", status: "active" },
         { id: "sid2", senderId: "MyBrand", status: "pending" },
       ],
-      balance: 150.75,
+      balance: 150.65,
+      smsCostPerMessage: 0.015,
 
       // ============ CONTACT ACTIONS ============
       addContact: (contactData) => {
@@ -278,12 +284,21 @@ export const useSmsStore = create<SmsStore>()(
 
       // ============ SMS ACTIONS ============
       sendSms: async (payload) => {
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
+        const state = get();
+        
+        // Check if balance is sufficient
         const recipients = Array.isArray(payload.to)
           ? payload.to
           : [payload.to];
+        
+        const totalCost = recipients.length * state.smsCostPerMessage;
+        
+        if (state.balance < totalCost) {
+          throw new Error(`Insufficient balance. Required: $${totalCost.toFixed(2)}, Available: $${state.balance.toFixed(2)}`);
+        }
+
+        // Simulate API delay
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Create SMS log entries for each recipient
         const logs = recipients.map((phone) => {
@@ -299,15 +314,16 @@ export const useSmsStore = create<SmsStore>()(
             created_at: new Date().toISOString(),
             delivered_at: new Date(Date.now() + 5000).toISOString(),
             gateway: "Mock Gateway",
-            price: 0.015,
+            price: state.smsCostPerMessage,
             currency: "USD",
           };
           return log;
         });
 
+        // Deduct balance and add logs
         set((state) => ({
           smsLogs: [...logs, ...state.smsLogs],
-          balance: state.balance - logs.length * 0.015,
+          balance: Number((state.balance - totalCost).toFixed(2)),
         }));
 
         return logs[0]; // Return first log
@@ -315,6 +331,17 @@ export const useSmsStore = create<SmsStore>()(
 
       getSmsLogs: () => {
         return get().smsLogs;
+      },
+
+      // ============ BALANCE ACTIONS ============
+      rechargeBalance: (amount) => {
+        set((state) => ({
+          balance: Number((state.balance + amount).toFixed(2)),
+        }));
+      },
+
+      getBalance: () => {
+        return get().balance;
       },
 
       // ============ SENDER ID ACTIONS ============
@@ -379,6 +406,7 @@ export const useSmsStore = create<SmsStore>()(
         smsLogs: state.smsLogs,
         senderIds: state.senderIds,
         balance: state.balance,
+        smsCostPerMessage: state.smsCostPerMessage,
       }),
     }
   )

@@ -6,6 +6,10 @@ import SmsList from "@/features/sms/components/SmsList";
 import { useSmsStore } from "@/stores/smsStore";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useState, useMemo, useEffect } from "react";
 
 export default function SmsPage() {
@@ -14,11 +18,24 @@ export default function SmsPage() {
   const contacts = useSmsStore((state) => state.contacts);
   const groups = useSmsStore((state) => state.groups);
   const balance = useSmsStore((state) => state.balance);
+  const smsCostPerMessage = useSmsStore((state) => state.smsCostPerMessage);
+  const rechargeBalance = useSmsStore((state) => state.rechargeBalance);
   const [activeTab, setActiveTab] = useState("send");
+  const [rechargeAmount, setRechargeAmount] = useState("");
+  const [isRechargeOpen, setIsRechargeOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleRecharge = () => {
+    const amount = parseFloat(rechargeAmount);
+    if (!isNaN(amount) && amount > 0) {
+      rechargeBalance(amount);
+      setRechargeAmount("");
+      setIsRechargeOpen(false);
+    }
+  };
 
   // Calculate statistics
   const stats = useMemo(() => {
@@ -73,7 +90,62 @@ export default function SmsPage() {
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-500">Account Balance</p>
-            <p className="text-2xl font-bold text-green-600">${stats.balance.toFixed(2)}</p>
+            <div className="flex items-center gap-3">
+              <p className={`text-2xl font-bold ${
+                stats.balance > 10 ? "text-green-600" : 
+                stats.balance > 5 ? "text-yellow-600" : "text-red-600"
+              }`}>${stats.balance.toFixed(2)}</p>
+              <Dialog open={isRechargeOpen} onOpenChange={setIsRechargeOpen}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                    💳 Recharge
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Recharge Balance</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                      <Label>Current Balance</Label>
+                      <div className="text-2xl font-bold text-green-600">
+                        ${stats.balance.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rechargeAmount">Recharge Amount ($)</Label>
+                      <Input
+                        id="rechargeAmount"
+                        type="number"
+                        step="0.01"
+                        min="1"
+                        placeholder="Enter amount"
+                        value={rechargeAmount}
+                        onChange={(e) => setRechargeAmount(e.target.value)}
+                      />
+                    </div>
+                    <div className="bg-blue-50 p-3 rounded-lg text-sm">
+                      <p className="text-gray-600">SMS Cost: ${mounted ? smsCostPerMessage.toFixed(3) : "0.015"} per message</p>
+                      {rechargeAmount && !isNaN(parseFloat(rechargeAmount)) && (
+                        <p className="text-blue-600 font-semibold mt-1">
+                          ≈ {Math.floor(parseFloat(rechargeAmount) / (mounted ? smsCostPerMessage : 0.015))} SMS messages
+                        </p>
+                      )}
+                    </div>
+                    <Button 
+                      onClick={handleRecharge} 
+                      className="w-full"
+                      disabled={!rechargeAmount || parseFloat(rechargeAmount) <= 0}
+                    >
+                      Recharge ${rechargeAmount || "0.00"}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              ${mounted ? smsCostPerMessage.toFixed(3) : "0.015"} per SMS
+            </p>
           </div>
         </div>
 
