@@ -20,6 +20,12 @@ import {
   mockGroups,
   mockSenderIds,
   mockBalance,
+  mockAddContact,
+  mockDeleteContact,
+  mockUpdateContact,
+  mockAddGroup,
+  mockDeleteGroup,
+  mockUpdateGroup,
 } from "@/lib/mocks/sms";
 
 // ============================
@@ -70,3 +76,22 @@ export const fetchSenderIds = () =>
 export const fetchBalance = () =>
   USE_MOCK ? Promise.resolve(mockBalance) : apiGet("/api/wallet/balance");
 
+// CONTACT MANAGEMENT
+export const addContact = (data: any) =>
+  USE_MOCK ? mockAddContact(data) : apiPost("/api/sms/contacts", data);
+
+export const updateContact = (id: string, data: any) =>
+  USE_MOCK ? mockUpdateContact(id, data) : apiPost(`/api/sms/contacts/${id}`, data);
+
+export const deleteContact = (id: string) =>
+  USE_MOCK ? mockDeleteContact(id) : apiPost(`/api/sms/contacts/${id}/delete`, {});
+
+// GROUP MANAGEMENT
+export const addGroup = (data: any) =>
+  USE_MOCK ? mockAddGroup(data) : apiPost("/api/sms/groups", data);
+
+export const updateGroup = (id: string, data: any) =>
+  USE_MOCK ? mockUpdateGroup(id, data) : apiPost(`/api/sms/groups/${id}`, data);
+
+export const deleteGroup = (id: string) =>
+  USE_MOCK ? mockDeleteGroup(id) : apiPost(`/api/sms/groups/${id}/delete`, {});

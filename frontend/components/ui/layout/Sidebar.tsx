@@ -67,6 +67,8 @@ interface MenuItem {
 const menuConfig: MenuItem[] = [
   { label: "Dashboard", href: "/dashboard", roles: ["admin", "reseller", "client"] },
   { label: "SMS", href: "/sms", roles: ["admin", "reseller", "client"] },
+  { label: "Contacts", href: "/contacts", roles: ["admin", "reseller", "client"] },
+  { label: "Groups", href: "/groups", roles: ["admin", "reseller", "client"] },
   { label: "Resellers", href: "/resellers", roles: ["admin"] },
   { label: "Clients", href: "/clients", roles: ["admin", "reseller"] },
   { label: "Reports", href: "/reports", roles: ["admin", "reseller"] },

@@ -82,3 +82,67 @@ export const mockSendSms = async (payload: any) => {
     ...payload,
   };
 };
+
+// ============ CONTACT MUTATIONS ============
+export const mockAddContact = async (data: any) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const newContact = {
+    id: `c${Date.now()}`,
+    ...data,
+  };
+  mockContacts.push(newContact);
+  return { success: true, data: newContact };
+};
+
+export const mockUpdateContact = async (id: string, data: any) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const index = mockContacts.findIndex(c => c.id === id);
+  if (index !== -1) {
+    mockContacts[index] = { ...mockContacts[index], ...data };
+  }
+  return { success: true };
+};
+
+export const mockDeleteContact = async (id: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const index = mockContacts.findIndex(c => c.id === id);
+  if (index !== -1) {
+    mockContacts.splice(index, 1);
+  }
+  return { success: true };
+};
+
+// ============ GROUP MUTATIONS ============
+export const mockAddGroup = async (data: any) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const newGroup = {
+    id: `g${Date.now()}`,
+    name: data.name,
+    contactCount: data.contactIds?.length || 0,
+    contactIds: data.contactIds || [],
+  };
+  mockGroups.push(newGroup);
+  return { success: true, data: newGroup };
+};
+
+export const mockUpdateGroup = async (id: string, data: any) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const index = mockGroups.findIndex(g => g.id === id);
+  if (index !== -1) {
+    mockGroups[index] = { 
+      ...mockGroups[index], 
+      ...data,
+      contactCount: data.contactIds?.length || mockGroups[index].contactCount
+    };
+  }
+  return { success: true };
+};
+
+export const mockDeleteGroup = async (id: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const index = mockGroups.findIndex(g => g.id === id);
+  if (index !== -1) {
+    mockGroups.splice(index, 1);
+  }
+  return { success: true };
+};
