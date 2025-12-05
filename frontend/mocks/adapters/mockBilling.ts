@@ -320,13 +320,33 @@ export const mockBilling = {
 =======
 import { wecallMockData } from "../data/wecallMockData";
 
-export const mockBilling = {
-  wallet: async (business_sid) =>
-    wecallMockData.billing.wallets.find((w) => w.business_sid === business_sid),
+const transactions = [...wecallMockData.billing.transactions];
+const wallets = [...wecallMockData.billing.wallets];
 
-  transactions: async (business_sid) =>
-    wecallMockData.billing.transactions.filter(
-      (t) => t.business_sid === business_sid
-    ),
+export const mockBilling = {
+  getWallet: async (business_sid: string) => wallets.find((w) => w.business_sid === business_sid) || null,
+
+  listTransactions: async (business_sid?: string) => {
+    if (!business_sid) return transactions;
+    return transactions.filter((t) => t.business_sid === business_sid);
+  },
+
+  createTopup: async (business_sid: string, amount: number, reference?: string) => {
+    const sid = "TX" + String(1000 + transactions.length + 1).padStart(4, "0");
+    const tx = {
+      sid,
+      business_sid,
+      type: "TOPUP",
+      amount,
+      currency: "USD",
+      reference: reference || `MOCK-TX-${sid}`,
+      created_at: new Date().toISOString(),
+    };
+    transactions.unshift(tx);
+    const w = wallets.find((x) => x.business_sid === business_sid);
+    if (w) w.balance += amount;
+    else wallets.unshift({ sid: `WL-${business_sid}`, business_sid, balance: amount, currency: "USD", credit_limit: 0 });
+    return tx;
+  },
 };
 >>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197

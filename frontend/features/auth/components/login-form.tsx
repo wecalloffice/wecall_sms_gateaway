@@ -1,5 +1,4 @@
 
-
 // "use client";
 
 // import { useState } from "react";
@@ -8,10 +7,12 @@
 
 // export function LoginForm() {
 //   const loginMutation = useLogin();
+
 //   const [form, setForm] = useState<LoginPayload>({
 //     business_username: "",
 //     password: "",
 //   });
+
 //   const [error, setError] = useState<string | null>(null);
 
 //   function update<K extends keyof LoginPayload>(key: K, value: LoginPayload[K]) {
@@ -21,13 +22,13 @@
 
 //   function onSubmit(e: React.FormEvent) {
 //     e.preventDefault();
-//     setError(null);
 
 //     if (!form.business_username || !form.password) {
-//       setError("Please enter your business username and password.");
+//       setError("Business username and password are required");
 //       return;
 //     }
 
+//     // This calls the fixed API function
 //     loginMutation.mutate(form, {
 //       onError: (err) => {
 //         setError((err as Error).message);
@@ -43,9 +44,7 @@
 //       <h2 className="text-3xl font-bold text-center text-black">Login</h2>
 
 //       <div className="space-y-2">
-//         <label className="text-black font-medium">
-//           Business username
-//         </label>
+//         <label className="text-black font-medium">Business Username</label>
 //         <input
 //           className="w-full p-3 border rounded-md"
 //           value={form.business_username}
@@ -54,9 +53,7 @@
 //       </div>
 
 //       <div className="space-y-2">
-//         <label className="text-black font-medium">
-//           Password
-//         </label>
+//         <label className="text-black font-medium">Password</label>
 //         <input
 //           type="password"
 //           className="w-full p-3 border rounded-md"
@@ -65,10 +62,7 @@
 //         />
 //       </div>
 
-//       {error && (
-//         <p className="text-red-600 text-center text-sm">{error}</p>
-//       )}
-
+//       {error && <p className="text-red-600 text-center text-sm">{error}</p>}
 //       {loginMutation.isError && !error && (
 //         <p className="text-red-600 text-center text-sm">
 //           {(loginMutation.error as Error)?.message || "Login failed"}
@@ -86,11 +80,10 @@
 
 import { useState } from "react";
 import { useLogin } from "../hooks";
-import { useRouter } from "next/navigation";
+import type { LoginPayload } from "../types";
 
 export function LoginForm() {
   const loginMutation = useLogin();
-  const router = useRouter();
 
   const [form, setForm] = useState<LoginPayload>({
     business_username: "",
@@ -99,24 +92,19 @@ export function LoginForm() {
 
   const [error, setError] = useState<string | null>(null);
 
-  function update<K extends keyof LoginPayload>(key: K, value: LoginPayload[K]) {
-    setError(null);
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError(null);
 
-    if (!form.business_username || !form.password) {
-      setError("Business username and password are required");
+    if (!form.business_username.trim() || !form.password.trim()) {
+      setError("Business username and password are required.");
       return;
     }
 
-    // This calls the fixed API function
+    console.log("FORM DATA SENT:", form); // 🔥 Debug: confirm values
+
     loginMutation.mutate(form, {
-      onError: (err) => {
-        setError((err as Error).message);
-      },
+      onError: (err) => setError((err as Error).message),
     });
   }
 
@@ -127,44 +115,49 @@ export function LoginForm() {
     >
       <h2 className="text-3xl font-bold text-center text-black">Login</h2>
 
+      {/* Business Username */}
       <div className="space-y-2">
         <label className="text-black font-medium">Business Username</label>
         <input
           className="w-full p-3 border rounded-md"
           value={form.business_username}
-          onChange={(e) => update("business_username", e.target.value)}
+          onChange={(e) =>
+            setForm((prev) => ({
+              ...prev,
+              business_username: e.target.value,
+            }))
+          }
         />
       </div>
 
+      {/* Password */}
       <div className="space-y-2">
         <label className="text-black font-medium">Password</label>
         <input
           type="password"
           className="w-full p-3 border rounded-md"
           value={form.password}
-          onChange={(e) => update("password", e.target.value)}
+          onChange={(e) =>
+            setForm((prev) => ({
+              ...prev,
+              password: e.target.value,
+            }))
+          }
         />
       </div>
 
-      <div className="flex justify-between items-center">
-        <button type="submit" className="btn-primary w-full">Login</button>
-      </div>
-
-      <div className="text-center mt-2">
-        <button
-          type="button"
-          className="text-sm text-blue-600 hover:underline"
-          onClick={() => router.push("/forgot-password")}
-        >
-          Forgot Password?
-        </button>
-      </div>
-
-      {loginMutation.isError && (
-        <p className="text-red-600 text-center mt-2">Invalid login credentials</p>
+      {/* Error */}
+      {error && <p className="text-red-600 text-center text-sm">{error}</p>}
+      {loginMutation.isError && !error && (
+        <p className="text-red-600 text-center text-sm">
+          {(loginMutation.error as Error)?.message || "Login failed"}
+        </p>
       )}
 
-      <button type="submit" className="btn-primary w-full">
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white p-3 rounded-md font-semibold hover:bg-blue-700 transition"
+      >
         Sign in
       </button>
     </form>

@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+'use client';
+
+// Wallet card component
+export default function WalletCard() {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow">
+      {/* Add wallet display here */}
+    </div>
+  );
+}
+=======
 // features/billing/components/wallet-card.tsx
 "use client";
 
@@ -120,3 +132,4 @@ export const WalletCard: React.FC<WalletCardProps> = ({
     </div>
   );
 };
+>>>>>>> 32926c17412e5c66b621e64be523f88c89ad76e7

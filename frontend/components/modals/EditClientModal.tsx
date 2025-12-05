@@ -1,0 +1,179 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
+
+interface EditClientModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (data: any) => Promise<void>;
+  clientData?: any;
+}
+
+export function EditClientModal({ isOpen, onClose, onSubmit, clientData }: EditClientModalProps) {
+  const [formData, setFormData] = useState({
+    business_name: '',
+    email: '',
+    contact_person: '',
+    contact_phone: '',
+    credit_limit: 500,
+    status: 'active',
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (clientData && isOpen) {
+      setFormData({
+        business_name: clientData.business_name || clientData.name || '',
+        email: clientData.email || '',
+        contact_person: clientData.contact_person || '',
+        contact_phone: clientData.contact_phone || '',
+        credit_limit: clientData.billing?.credit_limit || 500,
+        status: clientData.status || 'active',
+      });
+    }
+  }, [clientData, isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!formData.business_name) {
+      setError('Business name is required');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await onSubmit(formData);
+      onClose();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-gray-900">Edit Client</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X size={24} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Business Name *
+            </label>
+            <input
+              type="text"
+              required
+              className="input-field w-full"
+              value={formData.business_name}
+              onChange={(e) =>
+                setFormData({ ...formData, business_name: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              className="input-field w-full"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Contact Person
+            </label>
+            <input
+              type="text"
+              className="input-field w-full"
+              value={formData.contact_person}
+              onChange={(e) =>
+                setFormData({ ...formData, contact_person: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Phone
+            </label>
+            <input
+              type="tel"
+              className="input-field w-full"
+              value={formData.contact_phone}
+              onChange={(e) =>
+                setFormData({ ...formData, contact_phone: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Credit Limit
+            </label>
+            <input
+              type="number"
+              className="input-field w-full"
+              value={formData.credit_limit}
+              onChange={(e) =>
+                setFormData({ ...formData, credit_limit: Number(e.target.value) })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Status
+            </label>
+            <select
+              className="input-field w-full"
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-secondary flex-1"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="btn-primary flex-1" disabled={loading}>
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

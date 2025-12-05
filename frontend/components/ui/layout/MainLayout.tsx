@@ -6,7 +6,7 @@ import Topbar from "./Topbar";
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
-      <Sidebar />
+      <Sidebar role="admin" />
 
       <div className="flex flex-col flex-1">
         <Topbar />

@@ -1,3 +1,15 @@
+<<<<<<< HEAD
+'use client';
+
+// Transaction table component
+export default function TransactionTable() {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow">
+      {/* Add transaction table here */}
+    </div>
+  );
+}
+=======
 // features/billing/components/transaction-table.tsx
 "use client";
 
@@ -148,3 +160,4 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
     </Card>
   );
 };
+>>>>>>> 32926c17412e5c66b621e64be523f88c89ad76e7

@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+// Types for billing and transactions
+export interface Transaction {
+  id: string;
+  amount: number;
+  type: string;
+  // Add more fields
+}
+
+export interface Wallet {
+  balance: number;
+  currency: string;
+}
+=======
 // features/billing/types.ts
 
 // ============================================
@@ -169,3 +183,4 @@ export type BillingSettings = {
   company_name: string;
 };
 
+>>>>>>> 32926c17412e5c66b621e64be523f88c89ad76e7

@@ -1,49 +1,190 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ # 📚 Wecall SMS Gateway Frontend - README
 
-## Getting Started
+ ## Overview
 
-First, run the development server:
+ This is the **frontend** for the Wecall SMS Gateway platform, built with Next.js, React, TypeScript, and Tailwind CSS. It provides dashboards, authentication, SMS sending, billing, and management features for platform admins, resellers, and clients.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+ ---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ ## Table of Contents
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ - [Features](#features)
+ - [Tech Stack](#tech-stack)
+ - [Project Structure](#project-structure)
+ - [Getting Started](#getting-started)
+ - [Available Scripts](#available-scripts)
+ - [Reusable Components](#reusable-components)
+ - [Design System](#design-system)
+ - [Role-Based Routing](#role-based-routing)
+ - [Mock Data System](#mock-data-system)
+ - [Documentation](#documentation)
+ - [Contributing](#contributing)
+ - [License](#license)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+ ---
 
-## Learn More
+ ## Features
 
-To learn more about Next.js, take a look at the following resources:
+ - **Landing Page**: Role selection, feature highlights
+ - **Authentication**: Login, registration, role-based dashboards
+ - **Dashboards**: Platform, Reseller, Client dashboards with metrics, quick actions, recent activity
+ - **SMS Module**: Send SMS, view logs, status tracking
+ - **Billing & Wallet**: Wallet balance, top-up, transaction history
+ - **Settings & Security**: Account management, staff, security settings
+ - **Reusable Component Library**: StatCard, StatusBadge, ListCard, QuickActionsCard, AlertBox
+ - **Mock Data Adapters**: Simulated backend for development
+ - **Responsive Design**: Mobile-friendly layouts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+ ---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+ ## Tech Stack
 
-## Deploy on Vercel
+ - **Framework**: Next.js 16.x
+ - **Language**: TypeScript (strict mode)
+ - **UI**: React 18+, Tailwind CSS v4
+ - **Icons**: Lucide React
+ - **UI Primitives**: Radix UI
+ - **State/Data**: React Query
+ - **Testing**: (Add your preferred testing library)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+ ---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ ## Project Structure
 
-## Billing API (local mock)
+ ```
+ frontend/
+ ├── app/                # Next.js app directory
+ │   ├── (auth)/         # Auth pages (login, register)
+ │   ├── client/         # Client dashboard/pages
+ │   ├── platform/       # Platform admin dashboard/pages
+ │   ├── reseller/       # Reseller dashboard/pages
+ │   └── ...
+ ├── components/
+ │   └── ui/             # Reusable UI components
+ ├── features/
+ │   └── auth/           # Auth logic, hooks, API
+ ├── lib/
+ │   ├── formatters.ts   # Data formatting utilities
+ │   ├── constants/      # Design tokens, status colors
+ │   └── auth/           # Role-based routing utilities
+ ├── mocks/              # Mock data adapters
+ ├── public/             # Static assets
+ ├── styles/             # Global CSS
+ ├── README.md           # This file
+ ├── START_HERE.md       # Master implementation guide
+ └── ...
+ ```
 
-This project includes a simple JSON-backed billing backend for development under `app/api/billing`.
+ ---
 
-- `GET /api/billing/wallet/:businessId` - get or create a wallet for a business
-- `POST /api/billing/topup` - body `{ businessId, amount, description? }` to top up wallet
-- `GET /api/billing/transactions/:businessId` - list transactions (query `limit` & `offset`)
-- `GET /api/billing/pricing` - view pricing
-- `POST /api/billing/pricing` - set pricing `{ basePrice, resellerMargin, clientMargin }`
-- `POST /api/billing/sms/send` - mock SMS send: `{ businessId, parts?, to?, message? }` debits wallet and records `SMS_DEBIT`
+ ## Getting Started
 
-Data is stored in `data/billing.json` in project root for local development only.
+ ### Prerequisites
+ - Node.js 18+
+ - npm 9+
+
+ ### Installation
+
+ ```powershell
+ cd frontend
+ npm install
+ ```
+
+ ### Running Locally
+
+ ```powershell
+ npm run dev
+ ```
+
+ App will be available at `http://localhost:3000`
+
+ ---
+
+ ## Available Scripts
+
+ - `npm run dev` - Start development server
+ - `npm run build` - Build for production
+ - `npm run lint` - Run ESLint
+ - `npm run format` - Format code with Prettier
+ - `npm run test` - Run tests (if configured)
+
+ ---
+
+ ## Reusable Components
+
+ All major UI patterns are extracted as reusable components in `components/ui/`:
+
+ - **StatCard**: Metric display card
+ - **StatusBadge**: Status indicator with auto color
+ - **ListCard**: Generic list container
+ - **QuickActionsCard**: Navigation/action buttons
+ - **AlertBox**: Error/success/warning/info alerts
+
+ See `VISUAL_REFERENCE.md` for visual examples and API docs.
+
+ ---
+
+ ## Design System
+
+ - **Tailwind CSS**: Utility-first styling
+ - **Design Tokens**: Centralized in `lib/constants/statusColors.ts`
+ - **Light Theme Only**: No dark mode
+ - **Consistent Buttons**: `.btn-primary`, `.btn-primary-outline`
+
+ ---
+
+ ## Role-Based Routing
+
+ - **Roles**: PLATFORM_ADMIN, RESELLER_ADMIN, CLIENT_ADMIN
+ - **Utilities**: `lib/auth/roleBasedRouting.ts` for route management
+ - **Automatic Routing**: Auth hooks redirect users to correct dashboard
+
+ ---
+
+ ## Mock Data System
+
+ - **Adapters**: `mocks/` directory
+ - **Modules**: Accounts, SMS, Billing, Observability, Routing, Staff
+ - **Purpose**: Simulate backend for development and testing
+
+ ---
+
+ ## Documentation
+
+ - `START_HERE.md`: Master guide
+ - `COMPONENT_IMPLEMENTATION_GUIDE.md`: Step-by-step usage
+ - `REUSABLE_COMPONENTS.md`: Analysis and roadmap
+ - `REUSABLE_COMPONENTS_SUMMARY.md`: Quick reference
+ - `VISUAL_REFERENCE.md`: Visual examples
+ - `EXAMPLE_REFACTORED_DASHBOARD.tsx`: Before/after code
+
+ ---
+
+ ## Contributing
+
+ 1. Fork the repo
+ 2. Create a feature branch
+ 3. Commit your changes
+ 4. Open a pull request
+
+ **Coding Standards:**
+ - Use TypeScript strict mode
+ - Prefer reusable components
+ - Follow Tailwind CSS conventions
+ - Document new components in `COMPONENT_IMPLEMENTATION_GUIDE.md`
+
+ ---
+
+ ## License
+
+ MIT
+
+ ---
+
+ ## Contact
+
+ For questions or support, contact the Wecall SMS Gateway team at support@wecalloffice.com
+
+ ---
+
+ **Happy coding!** 🚀

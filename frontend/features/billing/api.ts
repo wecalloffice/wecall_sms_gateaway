@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+// API functions for billing and transactions
+export const billingApi = {
+  // Add API calls here
+};
+=======
 // features/billing/api.ts
 import { mockBilling } from "@/mocks/adapters/mockBilling";
 import type {
@@ -180,3 +186,4 @@ export async function getBillingAlerts(
   }
 }
 
+>>>>>>> 32926c17412e5c66b621e64be523f88c89ad76e7

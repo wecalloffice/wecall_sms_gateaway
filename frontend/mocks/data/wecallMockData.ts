@@ -4,6 +4,11 @@
 // Normalized and structured for all modules
 // ==============================================
 
+// ==============================================
+// WeCall SMS Platform – Full Mock Data
+// Normalized and structured for all modules
+// ==============================================
+
 export const wecallMockData = {
   platform_account: {
     account_sid: "AC_PLATFORM_0001",

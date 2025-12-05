@@ -16,7 +16,7 @@ export default function SmsKanbanView({ data }: { data: SmsMessage[] }) {
             {data
               .filter((sms) => sms.status === col)
               .map((sms) => (
-                <SmsCard key={sms.id} sms={sms} />
+                <SmsCard key={sms.sid} sms={sms} />
               ))}
           </div>
         </div>

@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+// Custom hooks for billing
+export const useBilling = () => {
+  // Add hooks here
+};
+=======
 // features/billing/hooks.ts
 "use client";
 
@@ -347,3 +353,4 @@ export function useBillingAlerts(businessSid: string | null) {
 
 
 
+>>>>>>> 32926c17412e5c66b621e64be523f88c89ad76e7
