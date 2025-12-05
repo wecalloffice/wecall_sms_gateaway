@@ -1,13 +1,4 @@
 
-// ==============================================
-// WeCall SMS Platform – Full Mock Data
-// Normalized and structured for all modules
-// ==============================================
-
-// ==============================================
-// WeCall SMS Platform – Full Mock Data
-// Normalized and structured for all modules
-// ==============================================
 
 export const wecallMockData = {
   platform_account: {
@@ -237,9 +228,4 @@ export const wecallMockData = {
       },
     ],
   },
-<<<<<<< HEAD
 };
-=======
-};
-
->>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197

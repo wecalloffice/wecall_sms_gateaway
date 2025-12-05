@@ -269,7 +269,7 @@
 
 # billing/services.py
 
-from curses import meta
+# from curses import meta
 from decimal import Decimal
 from django.db import transaction
 from django.core.exceptions import ValidationError
@@ -304,15 +304,6 @@ def topup_wallet(*, business, amount, source, created_by=None, notes=None):
         wallet.balance = new_balance
         wallet.save(update_fields=["balance", "updated_at"])
 
-        # tx = Transaction.objects.create(
-        #     wallet=wallet,
-        #     tx_type=Transaction.TxType.TOPUP,
-        #     amount=amount,
-        #     balance_after=new_balance,
-        #     description=notes or f"Top-up via {source}",
-        #     meta={"source": source},
-        #     created_by=created_by,
-        # )
         tx = Transaction.objects.create(
         wallet=wallet,
         tx_type=Transaction.TxType.SMS_DEBIT,
