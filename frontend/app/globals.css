@@ -1,45 +1,4 @@
-/* @import "tailwindcss";
 
-:root {
-  --primary: #ec008c;
-  --primary-light: #ff45c1;
-  --primary-dark: #b8006f;
-  --primary-accent: #e7b3d2;
-  --text-color:#111111;
-  --text-white: #f5f5f5;
-}
-
-@layer utilities {
-  
-  .bg-primary { background-color: var(--primary); }
-
-  
-  .nav-link {
-    color: var(--text-color);
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-
-  .nav-link:hover {
-    color: var(--primary);
-  }
-
-  .nav-link-active {
-    color: var(--primary);
-    font-weight: 700;
-  }
-
-  .btn-primary {
-    background-color: var(--primary);
-    color: var(--text-white);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-  }
-  .btn-primary:hover {
-    background-color: var(--primary-dark);
-  }
-} */
 
 @import "tailwindcss";
 
@@ -57,6 +16,13 @@
 
   --radius-md: 0.5rem;
   --transition-fast: 0.2s ease;
+}
+
+/* ------------------------------------------
+   SMOOTH SCROLLING
+------------------------------------------- */
+html {
+  scroll-behavior: smooth;
 }
 
 /* ------------------------------------------

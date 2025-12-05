@@ -95,6 +95,14 @@ export default function SendSmsForm() {
         type: "error",
         text: error.message || "Failed to send SMS. Please try again.",
       });
+      
+      // Scroll to show error message
+      setTimeout(() => {
+        const messageElement = document.querySelector('[data-status-message]');
+        if (messageElement) {
+          messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     } finally {
       setIsSending(false);
     }
@@ -222,12 +230,14 @@ export default function SendSmsForm() {
 
       {/* Status Messages */}
       {statusMessage && (
-        <div className={`p-3 rounded-md ${
+        <div 
+          data-status-message
+          className={`p-3 rounded-md ${
           statusMessage.type === "success" 
             ? "bg-green-50 border border-green-200 text-green-700"
             : "bg-red-50 border border-red-200 text-red-700"
         }`}>
-          <p className="text-sm">{statusMessage.text}</p>
+          {statusMessage.text}
         </div>
       )}
     </form>

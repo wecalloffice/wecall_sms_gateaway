@@ -65,9 +65,10 @@ interface MenuItem {
 
 // 3. Unified menu list with permissions
 const menuConfig: MenuItem[] = [
-  { label: "Dashboard", href: "/dashboard", roles: ["admin", "reseller", "client"] },
-  { label: "SMS", href: "/sms", roles: ["admin", "reseller", "client"] },
-  { label: "Contacts", href: "/contacts", roles: ["admin", "reseller", "client"] },
+  { label: "Dashboard", href: "/client/dashboard", roles: ["admin", "reseller", "client"] },
+  { label: "SMS", href: "/client/sms", roles: ["admin", "reseller", "client"] },
+  { label: "Logs", href: "/client/logs", roles: ["admin", "reseller", "client"] },
+  { label: "Contacts", href: "/client/contacts", roles: ["admin", "reseller", "client"] },
   { label: "Groups", href: "/groups", roles: ["admin", "reseller", "client"] },
   { label: "Resellers", href: "/resellers", roles: ["admin"] },
   { label: "Clients", href: "/clients", roles: ["admin", "reseller"] },

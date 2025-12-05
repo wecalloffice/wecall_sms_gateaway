@@ -1,20 +1,25 @@
-// import { Button } from "@/components/ui/button";
-
-import { FeaturesSection } from "@/components/ui/landing/FeaturesSection";
-import { Hero } from "@/components/ui/landing/Hero";
+import HeroSection from "@/components/ui/landing/HeroSection";
 import { Navbar } from "@/components/ui/landing/Navbar";
-import SendSmsForm from "@/features/sms/components/SendSmsForm";
-
-
-
+import { FeaturesSection } from "@/components/ui/landing/FeaturesSection";
+import { IntegrationsSection } from "@/components/ui/landing/IntegrationsSection";
+import { PricingSection } from "@/components/ui/landing/PricingSection";
+import { StatsSection } from "@/components/ui/landing/StatsSection";
+import { TestimonialsSection } from "@/components/ui/landing/TestimonialsSection";
+import { CTASection } from "@/components/ui/landing/CTASection";
+import Footer from "@/components/ui/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-primary via-primary-light to-white flex flex-col">
+    <main className="min-h-screen bg-white">
       <Navbar />
-      <Hero />
+      <HeroSection />
       <FeaturesSection />
-
+      <IntegrationsSection />
+      <StatsSection />
+      <PricingSection />
+      <TestimonialsSection />
+      <CTASection />
+      <Footer />
     </main>
   );
 }
