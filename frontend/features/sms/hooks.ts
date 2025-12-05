@@ -22,7 +22,7 @@
 // features/sms/hooks.ts
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   sendSms,
   fetchSmsLogs,
@@ -30,6 +30,12 @@ import {
   fetchGroups,
   fetchSenderIds,
   fetchBalance,
+  addContact,
+  updateContact,
+  deleteContact,
+  addGroup,
+  updateGroup,
+  deleteGroup,
 } from "./api";
 import type { SmsPayload } from "./types";
 
@@ -77,5 +83,67 @@ export function useBalance() {
   return useQuery({
     queryKey: ["balance"],
     queryFn: fetchBalance,
+  });
+}
+
+// ============ CONTACT MUTATIONS ============
+export function useAddContact() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    },
+  });
+}
+
+export function useUpdateContact() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => updateContact(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    },
+  });
+}
+
+export function useDeleteContact() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
+    },
+  });
+}
+
+// ============ GROUP MUTATIONS ============
+export function useAddGroup() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    },
+  });
+}
+
+export function useUpdateGroup() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => updateGroup(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    },
+  });
+}
+
+export function useDeleteGroup() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteGroup,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    },
   });
 }

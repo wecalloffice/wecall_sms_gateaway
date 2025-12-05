@@ -20,3 +20,16 @@ export type SmsPayload = {
   senderId: string;
   business_sid: string;
 };
+
+export type Contact = {
+  id: string;
+  name: string;
+  phone: string;
+};
+
+export type Group = {
+  id: string;
+  name: string;
+  contactCount: number;
+  contactIds?: string[];
+};

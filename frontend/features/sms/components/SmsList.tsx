@@ -1,11 +1,22 @@
 "use client";
-import { useSmsLogs } from "../hooks";
-import { SmsMessage } from "../types";
+import { useSmsStore } from "@/stores/smsStore";
+import { useState, useEffect } from "react";
 
 export default function SmsList() {
-  const { data: messages, isLoading } = useSmsLogs();
+  const smsLogs = useSmsStore((state) => state.getSmsLogs());
+  const [mounted, setMounted] = useState(false);
 
-  if (isLoading) return <p>Loading SMS logs...</p>;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (smsLogs.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        No SMS logs yet. Send your first message!
+      </div>
+    );
+  }
 
   return (
     <table className="table-auto w-full border">
@@ -13,6 +24,7 @@ export default function SmsList() {
         <tr>
           <th className="px-4 py-2">To</th>
           <th className="px-4 py-2">From</th>
+          <th className="px-4 py-2">Message</th>
           <th className="px-4 py-2">Status</th>
           <th className="px-4 py-2">Time</th>
           <th className="px-4 py-2">Gateway</th>
@@ -20,10 +32,11 @@ export default function SmsList() {
         </tr>
       </thead>
       <tbody>
-        {messages?.map((msg: SmsMessage) => (
+        {smsLogs.map((msg) => (
           <tr key={msg.sid} className="border-t">
             <td className="px-4 py-2">{msg.to}</td>
             <td className="px-4 py-2">{msg.from}</td>
+            <td className="px-4 py-2 max-w-xs truncate">{msg.message}</td>
             <td className="px-4 py-2">
               <span className={`px-2 py-1 rounded text-xs ${
                 msg.status === 'delivered' ? 'bg-green-100 text-green-800' :
@@ -33,7 +46,9 @@ export default function SmsList() {
                 {msg.status}
               </span>
             </td>
-            <td className="px-4 py-2">{new Date(msg.delivered_at || msg.created_at).toLocaleString()}</td>
+            <td className="px-4 py-2 text-sm">
+              {mounted ? new Date(msg.delivered_at || msg.created_at).toLocaleString() : '...'}
+            </td>
             <td className="px-4 py-2">{msg.gateway}</td>
             <td className="px-4 py-2">${msg.price?.toFixed(3)}</td>
           </tr>
