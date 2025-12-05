@@ -67,6 +67,8 @@ interface MenuItem {
 const menuConfig: MenuItem[] = [
   { label: "Dashboard", href: "/dashboard", roles: ["admin", "reseller", "client"] },
   { label: "SMS", href: "/sms", roles: ["admin", "reseller", "client"] },
+  { label: "Contacts", href: "/contacts", roles: ["admin", "reseller", "client"] },
+  { label: "Groups", href: "/groups", roles: ["admin", "reseller", "client"] },
   { label: "Resellers", href: "/resellers", roles: ["admin"] },
   { label: "Clients", href: "/clients", roles: ["admin", "reseller"] },
   { label: "Reports", href: "/reports", roles: ["admin", "reseller"] },
@@ -78,8 +80,17 @@ const menuConfig: MenuItem[] = [
 export default function Sidebar({ role = "admin" }: { role: Role }) {
   const pathname = usePathname();
 
+<<<<<<< HEAD
+  const menu = [
+    { label: "Dashboard", href: "/platform/dashboard" },
+    { label: "Resellers", href: "/platform/resellers" },
+    { label: "Clients", href: "/platform/clients" },
+    { label: "Billing", href: "/platform/billing" },  // <-- ADD THIS
+  ];
+=======
   // 4. Filter menu by permissions
   const allowedMenu = menuConfig.filter((item) => item.roles.includes(role));
+>>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197
 
   return (
     <aside className="w-64 bg-primary text-white h-screen p-5">

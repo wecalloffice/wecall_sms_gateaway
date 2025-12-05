@@ -106,6 +106,9 @@ export const mockAuth = {
     localStorage.setItem("mockAccounts", JSON.stringify(allAccounts));
     return { success: true, account };
   },
+<<<<<<< HEAD
+};
+=======
 
   whoami: async (token: string) => {
     if (!token) return null;

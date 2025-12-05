@@ -14,9 +14,6 @@ from business.serializers import (
 )
 
 
-# ============================================================
-# 🔹 PUBLIC BUSINESS REGISTRATION (CREATE BUSINESS + FIRST USER)
-# ============================================================
 class BusinessRegistrationView(generics.CreateAPIView):
     """
     Public or semi-public endpoint to register a new business

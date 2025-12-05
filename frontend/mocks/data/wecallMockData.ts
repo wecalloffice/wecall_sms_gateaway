@@ -237,5 +237,9 @@ export const wecallMockData = {
       },
     ],
   },
+<<<<<<< HEAD
+};
+=======
 };
 
+>>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197
