@@ -1,77 +1,33 @@
-/* @import "tailwindcss";
+@import "tailwindcss";
 
+/* Design tokens */
 :root {
   --primary: #ec008c;
   --primary-light: #ff45c1;
   --primary-dark: #b8006f;
   --primary-accent: #e7b3d2;
-  --text-color:#111111;
-  --text-white: #f5f5f5;
-}
 
-@layer utilities {
-  
-  .bg-primary { background-color: var(--primary); }
-
-  
-  .nav-link {
-    color: var(--text-color);
-    font-weight: 500;
-    transition: color 0.2s ease;
-  }
-
-  .nav-link:hover {
-    color: var(--primary);
-  }
-
-  .nav-link-active {
-    color: var(--primary);
-    font-weight: 700;
-  }
-
-  .btn-primary {
-    background-color: var(--primary);
-    color: var(--text-white);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    font-weight: 600;
-  }
-  .btn-primary:hover {
-    background-color: var(--primary-dark);
-  }
-} */
-
-@import "tailwindcss";
-
-/* ------------------------------------------
-   DESIGN TOKENS (Tailwind v4 Safe Mode)
-------------------------------------------- */
-:root {
-  --primary: #ec008c;          /* magenta */
-  --primary-light: #ff45c1;
-  --primary-dark: #b8006f;
-  --primary-accent: #e7b3d2;
-
-  --text-color: #111111;       /* black-ish */
-  --text-white: #ffffff;       /* pure white */
+  --text-color: #111111;
+  --text-white: #ffffff;
 
   --radius-md: 0.5rem;
   --transition-fast: 0.2s ease;
 }
 
-/* ------------------------------------------
-   Reusable Utility Classes
-------------------------------------------- */
+/* Base utilities */
 @layer utilities {
+  .bg-primary {
+    background-color: var(--primary);
+  }
 
-  /* Background colors */
-  .bg-primary { background-color: var(--primary); }
-  .bg-primary-light { background-color: var(--primary-light); }
-  .bg-primary-dark { background-color: var(--primary-dark); }
+  .bg-primary-light {
+    background-color: var(--primary-light);
+  }
 
-  /* --------------------------------------
-       NAVIGATION LINKS
-  --------------------------------------- */
+  .bg-primary-dark {
+    background-color: var(--primary-dark);
+  }
+
   .nav-link {
     color: var(--text-color);
     font-weight: 500;
@@ -87,9 +43,6 @@
     font-weight: 700;
   }
 
-  /* --------------------------------------
-       BUTTONS
-  --------------------------------------- */
   .btn-primary {
     background-color: var(--primary);
     color: var(--text-white);
@@ -97,7 +50,7 @@
     border-radius: var(--radius-md);
     font-weight: 600;
     transition: background-color var(--transition-fast),
-                transform var(--transition-fast);
+      transform var(--transition-fast);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -113,7 +66,6 @@
     background-color: var(--primary-light);
   }
 
-  /* Optional future scalable outline */
   .btn-primary-outline {
     background-color: transparent;
     border: 2px solid var(--primary);
@@ -130,4 +82,3 @@
     color: var(--text-white);
   }
 }
-
