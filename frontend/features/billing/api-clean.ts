@@ -1,41 +1,187 @@
 // features/billing/api.ts
+// Clean real-only API (no mocks) - use api.unified.ts for mock support
 
 "use client";
 
-import { Wallet, Transaction } from "./types";
+import type {
+  Wallet,
+  BillingTransaction,
+  PricingPlan,
+  RateCard,
+  UsageMetrics,
+  Invoice,
+  BillingAlert,
+} from "./types";
 
-const BASE_URL = "/api/billing";
+const API_BASE = "/api/billing";
 
-export async function getWallet(businessId: string): Promise<Wallet> {
-  const res = await fetch(`${BASE_URL}/wallet/${businessId}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch wallet");
-  return res.json();
+// ============================================
+// WALLET
+// ============================================
+
+export async function getWallet(businessSid: string): Promise<Wallet | null> {
+  try {
+    const res = await fetch(`${API_BASE}/wallet/${businessSid}/`, {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch wallet");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getWallet error:", error.message);
+    throw error;
+  }
 }
+
+// ============================================
+// TRANSACTIONS
+// ============================================
 
 export async function getTransactions(
-  businessId: string,
-  limit = 50,
-  offset = 0
-): Promise<Transaction[]> {
-  const res = await fetch(
-    `${BASE_URL}/transactions/${businessId}?limit=${limit}&offset=${offset}`,
-    { cache: "no-store" }
-  );
-  if (!res.ok) throw new Error("Failed to fetch transactions");
-  return res.json();
+  businessSid: string,
+  limit = 50
+): Promise<BillingTransaction[]> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/transactions/${businessSid}/?limit=${limit}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch transactions");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getTransactions error:", error.message);
+    throw error;
+  }
 }
 
-export async function topUpWallet(params: {
-  businessId: string;
+export interface TopupPayload {
+  business_sid: string;
   amount: number;
-  description?: string;
-  meta?: Record<string, any>;
-}): Promise<Wallet> {
-  const res = await fetch(`${BASE_URL}/topup`, {
-    method: "POST",
-    body: JSON.stringify(params),
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!res.ok) throw new Error("Failed to top up wallet");
-  return res.json();
+  reference?: string;
+}
+
+export async function topUpWallet(payload: TopupPayload): Promise<Wallet> {
+  try {
+    const res = await fetch(`${API_BASE}/topup/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Top-up failed");
+    }
+
+    return res.json();
+  } catch (error: any) {
+    console.error("topUpWallet error:", error.message);
+    throw error;
+  }
+}
+
+// ============================================
+// PRICING & RATE CARDS
+// ============================================
+
+export async function getPricingPlans(): Promise<PricingPlan[]> {
+  try {
+    const res = await fetch(`${API_BASE}/pricing-plans/`);
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch pricing plans");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getPricingPlans error:", error.message);
+    throw error;
+  }
+}
+
+export async function getRateCards(): Promise<RateCard[]> {
+  try {
+    const res = await fetch(`${API_BASE}/rate-cards/`);
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch rate cards");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getRateCards error:", error.message);
+    throw error;
+  }
+}
+
+// ============================================
+// USAGE & ANALYTICS
+// ============================================
+
+export async function getUsageMetrics(
+  businessSid: string,
+  period: "TODAY" | "THIS_WEEK" | "THIS_MONTH" = "THIS_MONTH"
+): Promise<UsageMetrics> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/usage/${businessSid}/?period=${period}`
+    );
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch usage metrics");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getUsageMetrics error:", error.message);
+    throw error;
+  }
+}
+
+// ============================================
+// INVOICES
+// ============================================
+
+export async function getInvoice(
+  businessSid: string,
+  periodStart: string,
+  periodEnd: string
+): Promise<Invoice> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/invoices/${businessSid}/?period_start=${periodStart}&period_end=${periodEnd}`
+    );
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch invoice");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getInvoice error:", error.message);
+    throw error;
+  }
+}
+
+// ============================================
+// ALERTS
+// ============================================
+
+export async function getBillingAlerts(
+  businessSid: string
+): Promise<BillingAlert[]> {
+  try {
+    const res = await fetch(`${API_BASE}/alerts/${businessSid}/`);
+    if (!res.ok) {
+      const errorBody = await res.json().catch(() => ({}));
+      throw new Error(errorBody.detail || "Failed to fetch alerts");
+    }
+    return res.json();
+  } catch (error: any) {
+    console.error("getBillingAlerts error:", error.message);
+    throw error;
+  }
 }

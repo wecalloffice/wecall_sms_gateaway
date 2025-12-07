@@ -12,7 +12,7 @@ import {
   getInvoice,
   getBillingAlerts,
   type TopupPayload,
-} from "./api";
+} from "./api.unified";
 import type {
   Wallet,
   BillingTransaction,

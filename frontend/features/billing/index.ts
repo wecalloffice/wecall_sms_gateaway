@@ -2,7 +2,7 @@
 // Export all billing components and utilities
 
 export * from "./types";
-export * from "./api";
+export * from "./api.unified";
 export * from "./hooks";
 
 // Components

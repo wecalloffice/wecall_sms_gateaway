@@ -1,35 +1,11 @@
-// import { mockSms } from "@/mocks/adapters/mockSms";
-// import { SmsPayload, SmsMessage } from "./types";
+import { mockSms } from "@/mocks/adapters/mockSms";
+import type { SmsMessage, SmsPayload } from "./types";
 
-// // Fetch SMS logs
-// export const listSms = async (business_sid: string): Promise<SmsMessage[]> => {
-//   return await mockSms.list(business_sid);
-// };
-
-// // Send SMS
-// export const sendSms = async (payload: SmsPayload) => {
-//   return await mockSms.send(payload);
-// };
-
-// features/sms/api.ts
-import { USE_MOCK } from "@/lib/env";
-import {
-  mockSendSms,
-  mockSmsLogs,
-  mockContacts,
-  mockGroups,
-  mockSenderIds,
-  mockBalance,
-  mockAddContact,
-  mockDeleteContact,
-  mockUpdateContact,
-  mockAddGroup,
-  mockDeleteGroup,
-  mockUpdateGroup,
-} from "@/lib/mocks/sms";
+const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_SMS !== "false";
+const API_BASE = "/api/sms";
 
 // ============================
-//    REAL BACKEND APIs
+//    Helper Functions
 // ============================
 
 async function apiGet(url: string) {
@@ -48,50 +24,137 @@ async function apiPost(url: string, data: any) {
   return res.json();
 }
 
+async function apiDelete(url: string) {
+  const res = await fetch(url, { method: "DELETE" });
+  if (!res.ok) throw new Error(`DELETE failed: ${url}`);
+  return res.json();
+}
+
 // ============================
-//        EXPORT API
+//    SMS MESSAGES
 // ============================
 
-// SEND SMS
-export const sendSms = (payload: any) =>
-  USE_MOCK ? mockSendSms(payload) : apiPost("/api/sms/send", payload);
+export async function listSms(business_sid: string) {
+  if (USE_MOCK) {
+    return mockSms.list(business_sid);
+  }
+  return apiGet(`${API_BASE}/logs/${business_sid}/`);
+}
 
-// SMS LOGS
-export const fetchSmsLogs = () =>
-  USE_MOCK ? Promise.resolve(mockSmsLogs) : apiGet("/api/sms/logs");
+export async function sendSms(payload: SmsPayload): Promise<{ sid: string }> {
+  if (USE_MOCK) {
+    return mockSms.send(payload);
+  }
+  return apiPost(`${API_BASE}/send/`, payload);
+}
 
-// CONTACTS
-export const fetchContacts = () =>
-  USE_MOCK ? Promise.resolve(mockContacts) : apiGet("/api/sms/contacts");
+// ============================
+//    CONTACTS
+// ============================
 
-// GROUPS
-export const fetchGroups = () =>
-  USE_MOCK ? Promise.resolve(mockGroups) : apiGet("/api/sms/groups");
+export async function fetchContacts(business_sid: string) {
+  if (USE_MOCK) {
+    // Return mock contacts (could filter by business_sid if needed)
+    return [
+      { id: "1", name: "John Doe", phone: "+1234567890", business_sid },
+      { id: "2", name: "Jane Smith", phone: "+0987654321", business_sid },
+      { id: "3", name: "Bob Johnson", phone: "+1122334455", business_sid },
+    ];
+  }
+  return apiGet(`${API_BASE}/contacts/${business_sid}/`);
+}
 
-// SENDER IDs
-export const fetchSenderIds = () =>
-  USE_MOCK ? Promise.resolve(mockSenderIds) : apiGet("/api/sms/sender-ids");
+export async function addContact(business_sid: string, data: any) {
+  if (USE_MOCK) {
+    const newContact = {
+      id: `c${Date.now()}`,
+      business_sid,
+      ...data,
+    };
+    return { success: true, data: newContact };
+  }
+  return apiPost(`${API_BASE}/contacts/${business_sid}/`, data);
+}
 
-// BALANCE
-export const fetchBalance = () =>
-  USE_MOCK ? Promise.resolve(mockBalance) : apiGet("/api/wallet/balance");
+export async function updateContact(business_sid: string, id: string, data: any) {
+  if (USE_MOCK) {
+    return { success: true };
+  }
+  return apiPost(`${API_BASE}/contacts/${business_sid}/${id}/`, data);
+}
 
-// CONTACT MANAGEMENT
-export const addContact = (data: any) =>
-  USE_MOCK ? mockAddContact(data) : apiPost("/api/sms/contacts", data);
+export async function deleteContact(business_sid: string, id: string) {
+  if (USE_MOCK) {
+    return { success: true };
+  }
+  return apiDelete(`${API_BASE}/contacts/${business_sid}/${id}/`);
+}
 
-export const updateContact = (id: string, data: any) =>
-  USE_MOCK ? mockUpdateContact(id, data) : apiPost(`/api/sms/contacts/${id}`, data);
+// ============================
+//    GROUPS
+// ============================
 
-export const deleteContact = (id: string) =>
-  USE_MOCK ? mockDeleteContact(id) : apiPost(`/api/sms/contacts/${id}/delete`, {});
+export async function fetchGroups(business_sid: string) {
+  if (USE_MOCK) {
+    return [
+      { id: "g1", name: "Marketing Team", contactCount: 25, business_sid },
+      { id: "g2", name: "Sales Team", contactCount: 15, business_sid },
+      { id: "g3", name: "Support Team", contactCount: 10, business_sid },
+    ];
+  }
+  return apiGet(`${API_BASE}/groups/${business_sid}/`);
+}
 
-// GROUP MANAGEMENT
-export const addGroup = (data: any) =>
-  USE_MOCK ? mockAddGroup(data) : apiPost("/api/sms/groups", data);
+export async function addGroup(business_sid: string, data: any) {
+  if (USE_MOCK) {
+    const newGroup = {
+      id: `g${Date.now()}`,
+      business_sid,
+      name: data.name,
+      contactCount: data.contactIds?.length || 0,
+      contactIds: data.contactIds || [],
+    };
+    return { success: true, data: newGroup };
+  }
+  return apiPost(`${API_BASE}/groups/${business_sid}/`, data);
+}
 
-export const updateGroup = (id: string, data: any) =>
-  USE_MOCK ? mockUpdateGroup(id, data) : apiPost(`/api/sms/groups/${id}`, data);
+export async function updateGroup(business_sid: string, id: string, data: any) {
+  if (USE_MOCK) {
+    return { success: true };
+  }
+  return apiPost(`${API_BASE}/groups/${business_sid}/${id}/`, data);
+}
 
-export const deleteGroup = (id: string) =>
-  USE_MOCK ? mockDeleteGroup(id) : apiPost(`/api/sms/groups/${id}/delete`, {});
+export async function deleteGroup(business_sid: string, id: string) {
+  if (USE_MOCK) {
+    return { success: true };
+  }
+  return apiDelete(`${API_BASE}/groups/${business_sid}/${id}/`);
+}
+
+// ============================
+//    SENDER IDS
+// ============================
+
+export async function fetchSenderIds(business_sid: string) {
+  if (USE_MOCK) {
+    return [
+      { id: "sid1", senderId: "WeCall", status: "active", business_sid },
+      { id: "sid2", senderId: "MyBrand", status: "pending", business_sid },
+      { id: "sid3", senderId: "Support", status: "active", business_sid },
+    ];
+  }
+  return apiGet(`${API_BASE}/sender-ids/${business_sid}/`);
+}
+
+// ============================
+//    WALLET/BALANCE
+// ============================
+
+export async function fetchBalance(business_sid: string) {
+  if (USE_MOCK) {
+    return { balance: 150.75, currency: "USD", business_sid };
+  }
+  return apiGet(`/api/wallet/balance/${business_sid}/`);
+}

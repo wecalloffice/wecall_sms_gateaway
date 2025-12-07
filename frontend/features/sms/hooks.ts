@@ -24,8 +24,8 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  listSms,
   sendSms,
-  fetchSmsLogs,
   fetchContacts,
   fetchGroups,
   fetchSenderIds,
@@ -39,58 +39,40 @@ import {
 } from "./api";
 import type { SmsPayload } from "./types";
 
+// ============ SMS MESSAGES ============
+
+export function useSmsLogs(business_sid: string) {
+  return useQuery({
+    queryKey: ["sms-logs", business_sid],
+    queryFn: () => listSms(business_sid),
+  });
+}
+
 // SEND SMS
 export function useSendSms() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: SmsPayload) => sendSms(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sms-logs"] });
+    },
   });
 }
 
-// SMS LOGS
-export function useSmsLogs() {
+// ============ CONTACTS ============
+
+export function useContacts(business_sid: string) {
   return useQuery({
-    queryKey: ["sms-logs"],
-    queryFn: fetchSmsLogs,
+    queryKey: ["contacts", business_sid],
+    queryFn: () => fetchContacts(business_sid),
   });
 }
 
-// CONTACTS
-export function useContacts() {
-  return useQuery({
-    queryKey: ["contacts"],
-    queryFn: fetchContacts,
-  });
-}
-
-// GROUPS
-export function useGroups() {
-  return useQuery({
-    queryKey: ["groups"],
-    queryFn: fetchGroups,
-  });
-}
-
-// SENDER IDs
-export function useSenderIds() {
-  return useQuery({
-    queryKey: ["senderIds"],
-    queryFn: fetchSenderIds,
-  });
-}
-
-// WALLET BALANCE
-export function useBalance() {
-  return useQuery({
-    queryKey: ["balance"],
-    queryFn: fetchBalance,
-  });
-}
-
-// ============ CONTACT MUTATIONS ============
 export function useAddContact() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: addContact,
+    mutationFn: ({ business_sid, data }: { business_sid: string; data: any }) =>
+      addContact(business_sid, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contacts"] });
     },
@@ -100,7 +82,15 @@ export function useAddContact() {
 export function useUpdateContact() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => updateContact(id, data),
+    mutationFn: ({
+      business_sid,
+      id,
+      data,
+    }: {
+      business_sid: string;
+      id: string;
+      data: any;
+    }) => updateContact(business_sid, id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contacts"] });
     },
@@ -110,18 +100,28 @@ export function useUpdateContact() {
 export function useDeleteContact() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteContact,
+    mutationFn: ({ business_sid, id }: { business_sid: string; id: string }) =>
+      deleteContact(business_sid, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contacts"] });
     },
   });
 }
 
-// ============ GROUP MUTATIONS ============
+// ============ GROUPS ============
+
+export function useGroups(business_sid: string) {
+  return useQuery({
+    queryKey: ["groups", business_sid],
+    queryFn: () => fetchGroups(business_sid),
+  });
+}
+
 export function useAddGroup() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: addGroup,
+    mutationFn: ({ business_sid, data }: { business_sid: string; data: any }) =>
+      addGroup(business_sid, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
     },
@@ -131,7 +131,15 @@ export function useAddGroup() {
 export function useUpdateGroup() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => updateGroup(id, data),
+    mutationFn: ({
+      business_sid,
+      id,
+      data,
+    }: {
+      business_sid: string;
+      id: string;
+      data: any;
+    }) => updateGroup(business_sid, id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
     },
@@ -141,9 +149,28 @@ export function useUpdateGroup() {
 export function useDeleteGroup() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteGroup,
+    mutationFn: ({ business_sid, id }: { business_sid: string; id: string }) =>
+      deleteGroup(business_sid, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups"] });
     },
+  });
+}
+
+// ============ SENDER IDs ============
+
+export function useSenderIds(business_sid: string) {
+  return useQuery({
+    queryKey: ["sender-ids", business_sid],
+    queryFn: () => fetchSenderIds(business_sid),
+  });
+}
+
+// ============ WALLET BALANCE ============
+
+export function useBalance(business_sid: string) {
+  return useQuery({
+    queryKey: ["balance", business_sid],
+    queryFn: () => fetchBalance(business_sid),
   });
 }
