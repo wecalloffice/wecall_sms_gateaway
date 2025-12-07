@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // mocks/adapters/mockBilling.ts
 import { wecallMockData } from "../data/wecallMockData";
 import type {
@@ -43,7 +42,7 @@ function findOrCreateWallet(business_sid: string): Wallet {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    wecallMockData.billing.wallets.push(wallet);
+    wecallMockData.billing.wallets.push({ ...wallet, credit_limit: wallet.credit_limit ?? 0 });
   }
 
   return wallet;
@@ -55,7 +54,7 @@ const pricingPlans: PricingPlan[] = [
     sid: "PLAN_PAYGO",
     name: "Pay As You Go",
     description: "Pay only for what you use",
-    type: "PAY_AS_YOU_GO",
+    type: "PREPAID",
     base_price_per_sms: 0.0075,
     volume_tiers: [
       { min_messages: 0, max_messages: 50000, price_per_sms: 0.0075 },
@@ -67,7 +66,7 @@ const pricingPlans: PricingPlan[] = [
     sid: "PLAN_STARTER",
     name: "Starter Plan",
     description: "1M messages/month included",
-    type: "MONTHLY_SUBSCRIPTION",
+    type: "POSTPAID",
     base_price_per_sms: 0.005,
   },
 ];
@@ -148,7 +147,7 @@ export const mockBilling = {
       status: "COMPLETED",
     };
 
-    wecallMockData.billing.transactions.push(tx);
+    wecallMockData.billing.transactions.push(tx as any);
     return wallet;
   },
 
@@ -180,7 +179,7 @@ export const mockBilling = {
       status: "COMPLETED",
     };
 
-    wecallMockData.billing.transactions.push(tx);
+    wecallMockData.billing.transactions.push(tx as any);
     return wallet;
   },
 
@@ -317,36 +316,3 @@ export const mockBilling = {
     return alerts;
   },
 };
-=======
-import { wecallMockData } from "../data/wecallMockData";
-
-const transactions = [...wecallMockData.billing.transactions];
-const wallets = [...wecallMockData.billing.wallets];
-
-export const mockBilling = {
-  getWallet: async (business_sid: string) => wallets.find((w) => w.business_sid === business_sid) || null,
-
-  listTransactions: async (business_sid?: string) => {
-    if (!business_sid) return transactions;
-    return transactions.filter((t) => t.business_sid === business_sid);
-  },
-
-  createTopup: async (business_sid: string, amount: number, reference?: string) => {
-    const sid = "TX" + String(1000 + transactions.length + 1).padStart(4, "0");
-    const tx = {
-      sid,
-      business_sid,
-      type: "TOPUP",
-      amount,
-      currency: "USD",
-      reference: reference || `MOCK-TX-${sid}`,
-      created_at: new Date().toISOString(),
-    };
-    transactions.unshift(tx);
-    const w = wallets.find((x) => x.business_sid === business_sid);
-    if (w) w.balance += amount;
-    else wallets.unshift({ sid: `WL-${business_sid}`, business_sid, balance: amount, currency: "USD", credit_limit: 0 });
-    return tx;
-  },
-};
->>>>>>> 0d4d5bf2bbd4eff8d412ceb5964ee9a17dd1e197
