@@ -1,20 +1,33 @@
+
+
 @import "tailwindcss";
 
-/* Design tokens */
+/* ------------------------------------------
+   DESIGN TOKENS (Tailwind v4 Safe Mode)
+------------------------------------------- */
 :root {
-  --primary: #ec008c;
+  --primary: #ec008c;          /* magenta */
   --primary-light: #ff45c1;
   --primary-dark: #b8006f;
   --primary-accent: #e7b3d2;
 
-  --text-color: #111111;
-  --text-white: #ffffff;
+  --text-color: #111111;       /* black-ish */
+  --text-white: #ffffff;       /* pure white */
 
   --radius-md: 0.5rem;
   --transition-fast: 0.2s ease;
 }
 
-/* Base utilities */
+/* ------------------------------------------
+   SMOOTH SCROLLING
+------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ------------------------------------------
+   Reusable Utility Classes
+------------------------------------------- */
 @layer utilities {
   .bg-primary {
     background-color: var(--primary);
