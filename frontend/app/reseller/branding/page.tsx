@@ -1,3 +1,5 @@
+'use client';
+
 import BrandingManagementPage from '@/features/branding/BrandingManagementPage';
 
 export default function Page() {

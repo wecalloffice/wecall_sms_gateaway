@@ -1,98 +1,97 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import MainLayout from "@/components/layout/MainLayout";
-import StatCard from "@/components/StatCard";
-import { Building2, Users, MessageSquare, Wallet } from "lucide-react";
-import { mockAccounts } from "@/mocks/adapters/mockAccounts";
-import { mockSms } from "@/mocks/adapters/mockSms";
-import { mockObservability } from "@/mocks/adapters/mockObservability";
+import { useQuery } from '@tanstack/react-query';
+import { RoleBasedLayout } from '@/components/platform/RoleBasedLayout';
+import { RoleStatCard } from '@/components/platform/RoleStatCard';
+import { RoleActions } from '@/components/platform/RoleActions';
+import { RecentMessagesList } from '@/components/platform/RecentMessagesList';
+import { mockAccounts } from '@/mocks/adapters/mockAccounts';
+import { mockSms } from '@/mocks/adapters/mockSms';
+import { mockBilling } from '@/mocks/adapters/mockBilling';
+import { wecallMockData } from '@/mocks/data/wecallMockData';
+import { Users, MessageSquare, DollarSign, TrendingUp } from 'lucide-react';
 
-// Placeholder component for RecentActivity
-const RecentActivity = () => <div className="bg-white rounded-lg p-6">Recent Activity</div>;
-
-// Placeholder component for QuickActions
-const QuickActions = () => <div className="bg-white rounded-lg p-6">Quick Actions</div>;
+const ROLE = 'PLATFORM' as const;
 
 export default function PlatformDashboardPage() {
-  const [stats, setStats] = useState({
-    activeResellers: 0,
-    totalClients: 0,
-    messagesToday: 0,
-    revenueThisMonth: 0,
+  const { data: resellers = [] } = useQuery({
+    queryKey: ['resellers'],
+    queryFn: () => mockAccounts.getResellers(),
   });
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const resellers = await mockAccounts.listResellers();
-        const messages = await mockSms.list();
-        const events = await mockObservability.listEvents();
+  const { data: clients = [] } = useQuery({
+    queryKey: ['clients', resellers],
+    queryFn: async () => {
+      const allClients = resellers.flatMap((r: any) => r.clients || []);
+      return allClients;
+    },
+    enabled: resellers.length > 0,
+  });
 
-        const totalClients = resellers.reduce((acc: number, r: any) => acc + (r.clients?.length || 0), 0);
-        const today = new Date().toISOString().split('T')[0];
-        const messagesToday = messages.filter((m) => m.created_at?.startsWith(today)).length;
+  const { data: messages = [], isLoading: messagesLoading } = useQuery({
+    queryKey: ['messages'],
+    queryFn: () => mockSms.list(wecallMockData.resellers[0]?.clients[0]?.account_sid),
+  });
 
-        setStats({
-          activeResellers: resellers.filter((r: any) => r.status === "active").length,
-          totalClients,
-          messagesToday,
-          revenueThisMonth: 45230,
-        });
+  const { data: wallet } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: () => mockBilling.wallet('AC_RESELLER_1001'),
+  });
 
-        setRecentActivity(events.slice(0, 5));
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const totalMessages = messages.length;
+  const deliveredMessages = messages.filter((m: any) => m.status === 'delivered').length;
+  const successRate = totalMessages > 0 ? ((deliveredMessages / totalMessages) * 100).toFixed(1) : '0';
 
-    fetchData();
-  }, []);
+  const statsSection = (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <RoleStatCard
+        title="Total Clients"
+        value={clients.length}
+        icon={<Users className="w-5 h-5" />}
+        color="text-blue-600"
+        role={ROLE}
+      />
+      <RoleStatCard
+        title="Messages Sent"
+        value={totalMessages}
+        icon={<MessageSquare className="w-5 h-5" />}
+        color="text-purple-600"
+        role={ROLE}
+      />
+      <RoleStatCard
+        title="Success Rate"
+        value={successRate}
+        unit="%"
+        icon={<TrendingUp className="w-5 h-5" />}
+        color="text-green-600"
+        role={ROLE}
+      />
+      <RoleStatCard
+        title="Platform Balance"
+        value={`$${wallet?.balance?.toFixed(2) || '0.00'}`}
+        icon={<DollarSign className="w-5 h-5" />}
+        color="text-emerald-600"
+        role={ROLE}
+      />
+    </div>
+  );
 
-  if (loading) return <MainLayout role="PLATFORM_ADMIN" businessName="WeCall Platform" userName="Admin User">
-    <div className="flex items-center justify-center h-full text-gray-600">Loading dashboard data...</div>
-  </MainLayout>;
+  const bottomSection = (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2">
+        <RecentMessagesList messages={messages} isLoading={messagesLoading} />
+      </div>
+      <RoleActions role={ROLE} />
+    </div>
+  );
 
   return (
-    <MainLayout role="PLATFORM_ADMIN" businessName="WeCall Platform" userName="Admin User">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Platform Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back to your platform control center</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard icon={<Building2 size={24} style={{ color: 'var(--primary)' }} />} label="Active Resellers" value={stats.activeResellers} change="2" />
-          <StatCard icon={<Users size={24} style={{ color: 'var(--primary)' }} />} label="Total Clients" value={stats.totalClients} change="125" />
-          <StatCard icon={<MessageSquare size={24} style={{ color: 'var(--primary)' }} />} label="Messages Today" value={stats.messagesToday.toLocaleString()} change="15%" />
-          <StatCard icon={<Wallet size={24} style={{ color: 'var(--primary)' }} />} label="Revenue This Month" value={`$${stats.revenueThisMonth.toLocaleString()}`} change="18%" />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow">
-            <h3 className="text-lg font-semibold mb-4">Recent Activity</h3>
-            <div className="space-y-2">
-              {recentActivity.map((event: any, idx: number) => (
-                <div key={idx} className="text-sm text-gray-600 border-b pb-2">
-                  {event.event_type} - {new Date(event.created_at).toLocaleString()}
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-white rounded-lg p-6 shadow">
-            <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <a href="/platform/resellers" className="block px-4 py-2 bg-primary text-white rounded hover:opacity-90">Add New Reseller</a>
-              <a href="/platform/billing" className="block px-4 py-2 bg-primary text-white rounded hover:opacity-90">View Billing Reports</a>
-              <a href="/platform/logs" className="block px-4 py-2 bg-primary text-white rounded hover:opacity-90">Check System Health</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </MainLayout>
+    <RoleBasedLayout
+      title="Platform Dashboard"
+      subtitle="Monitor all resellers and clients activity"
+      role={ROLE}
+      topSection={statsSection}
+      bottomSection={bottomSection}
+    />
   );
 }

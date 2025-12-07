@@ -3,10 +3,18 @@
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
-export default function MainLayout({ children }: { children: React.ReactNode }) {
+type Role = "PLATFORM" | "RESELLER" | "CLIENT";
+
+export default function MainLayout({
+  children,
+  role = "CLIENT",
+}: {
+  children: React.ReactNode;
+  role?: Role;
+}) {
   return (
     <div className="flex h-screen">
-      <Sidebar role="admin" />
+      <Sidebar role={role} />
 
       <div className="flex flex-col flex-1">
         <Topbar />

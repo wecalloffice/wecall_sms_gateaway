@@ -1,6 +1,7 @@
 'use client';
 
 import { BRANDING_DEFAULTS } from '@/lib/constants/branding';
+import { wecallMockData } from '../data/wecallMockData';
 
 interface BrandingConfig {
   client_sid: string;
@@ -21,27 +22,48 @@ class MockBrandingAdapter {
   private brandingConfigs: Map<string, BrandingConfig> = new Map();
 
   constructor() {
-    // Initialize with default branding for demo clients
-    this.initializeDefaults();
+    this.initializeFromMockData();
   }
 
-  private initializeDefaults() {
-    // Default branding for demo client
-    const defaultBranding: BrandingConfig = {
-      client_sid: 'AC_CLIENT_001',
-      reseller_sid: 'AC_RESELLER_1001',
-      companyName: 'Rwanda Development Board',
-      logoUrl: '/logo.png',
-      primaryColor: BRANDING_DEFAULTS.primaryColor,
-      secondaryColor: BRANDING_DEFAULTS.secondaryColor,
-      accentColor: BRANDING_DEFAULTS.accentColor,
-      supportEmail: 'support@rdb.rw',
-      supportPhone: '+250712345678',
-      websiteUrl: 'https://rdb.rw',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    this.brandingConfigs.set('AC_CLIENT_001', defaultBranding);
+  private initializeFromMockData() {
+    const now = new Date().toISOString();
+
+    wecallMockData.resellers.forEach((reseller) => {
+      const resellerBranding: BrandingConfig = {
+        client_sid: reseller.account_sid,
+        reseller_sid: reseller.account_sid,
+        companyName: reseller.name,
+        logoUrl: BRANDING_DEFAULTS.logoUrl,
+        primaryColor: BRANDING_DEFAULTS.primaryColor,
+        secondaryColor: BRANDING_DEFAULTS.secondaryColor,
+        accentColor: BRANDING_DEFAULTS.accentColor,
+        supportEmail: 'support@wecall.test',
+        supportPhone: '+250700000000',
+        websiteUrl: 'https://wecall.test',
+        created_at: now,
+        updated_at: now,
+      };
+
+      this.brandingConfigs.set(reseller.account_sid, resellerBranding);
+
+      reseller.clients.forEach((client) => {
+        const clientBranding: BrandingConfig = {
+          client_sid: client.account_sid,
+          reseller_sid: reseller.account_sid,
+          companyName: client.name,
+          logoUrl: BRANDING_DEFAULTS.logoUrl,
+          primaryColor: '#1E3A8A',
+          secondaryColor: '#6B7280',
+          accentColor: BRANDING_DEFAULTS.accentColor,
+          supportEmail: `support@${client.business_username}.test`,
+          supportPhone: '+250700000000',
+          websiteUrl: `https://${client.business_username}.test`,
+          created_at: now,
+          updated_at: now,
+        };
+        this.brandingConfigs.set(client.account_sid, clientBranding);
+      });
+    });
   }
 
   // Get branding config for a specific client
@@ -49,7 +71,7 @@ class MockBrandingAdapter {
     return (
       this.brandingConfigs.get(clientSid) || {
         client_sid: clientSid,
-        reseller_sid: 'AC_RESELLER_1001',
+        reseller_sid: wecallMockData.resellers[0]?.account_sid ?? 'AC_RESELLER_1001',
         companyName: BRANDING_DEFAULTS.companyName,
         logoUrl: BRANDING_DEFAULTS.logoUrl,
         primaryColor: BRANDING_DEFAULTS.primaryColor,

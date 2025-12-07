@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import MainLayout from '@/components/layout/MainLayout';
 import BrandingHeader from '@/components/branding/BrandingHeader';
 import BrandingSearchBar from '@/components/branding/BrandingSearchBar';
 import BrandingGrid from '@/components/branding/BrandingGrid';
@@ -27,7 +26,8 @@ export default function BrandingManagementPage() {
 
   const loadData = async () => {
     setLoading(true);
-    const list = await mockAccounts.listClients();
+    const resellers = await mockAccounts.getResellers();
+    const list = resellers.flatMap((r: any) => r.clients || []).map((c: any) => ({ ...c, sid: c.account_sid }));
     setClients(list);
     setFiltered(list);
 
@@ -51,35 +51,33 @@ export default function BrandingManagementPage() {
   }, [searchTerm, clients]);
 
   return (
-    <MainLayout role="RESELLER_ADMIN" businessName="Acme Reseller" userName="Reseller Admin">
-      <div className="space-y-6">
-        <BrandingHeader />
+    <div className="space-y-6">
+      <BrandingHeader />
 
-        <BrandingSearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <BrandingSearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        <BrandingGrid
-          clients={filtered}
-          brandingConfigs={brandingConfigs}
-          loading={loading}
-          onCustomize={(client) => setSelectedClient(client)}
-          onPreview={(sid) => setPreviewSid(sid)}
+      <BrandingGrid
+        clients={filtered}
+        brandingConfigs={brandingConfigs}
+        loading={loading}
+        onCustomize={(client) => setSelectedClient(client)}
+        onPreview={(sid) => setPreviewSid(sid)}
+      />
+
+      {selectedClient && (
+        <BrandingModal
+          isOpen
+          clientSid={selectedClient.sid}
+          clientName={selectedClient?.business_name ?? 'Unknown'}
+          onClose={() => setSelectedClient(null)}
+          onSave={() => loadData()}
         />
+      )}
 
-        {selectedClient && (
-          <BrandingModal
-            isOpen
-            clientSid={selectedClient.sid}
-            clientName={selectedClient?.business_name ?? 'Unknown'}
-            onClose={() => setSelectedClient(null)}
-            onSave={() => loadData()}
-          />
-        )}
-
-        {previewSid && (
-          <BrandingPreview clientSid={previewSid} onClose={() => setPreviewSid(null)} />
-        )}
-      </div>
-    </MainLayout>
+      {previewSid && (
+        <BrandingPreview clientSid={previewSid} onClose={() => setPreviewSid(null)} />
+      )}
+    </div>
   );
 }
 

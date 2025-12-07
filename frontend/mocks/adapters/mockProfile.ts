@@ -1,5 +1,7 @@
 'use client';
 
+import { wecallMockData } from '../data/wecallMockData';
+
 interface UserProfile {
   sid: string;
   business_name: string;
@@ -34,65 +36,64 @@ class MockProfileAdapter {
   }
 
   private initializeProfiles() {
-    // Client profile
-    const clientProfile: UserProfile = {
-      sid: 'AC_CLIENT_001',
-      business_name: 'Rwanda Development Board',
-      business_username: 'rdb',
-      email: 'admin@rdb.rw',
-      phone: '+250712345678',
-      country: 'Rwanda',
-      business_type: 'CLIENT',
-      account_status: 'active',
-      created_at: '2024-01-15T10:30:00Z',
-      updated_at: '2024-12-04T14:22:00Z',
-      contact_person: 'Alice Mukamana',
-    };
-    this.profiles.set('AC_CLIENT_001', clientProfile);
+    const now = new Date().toISOString();
 
-    // Reseller profile
-    const resellerProfile: UserProfile = {
-      sid: 'AC_RESELLER_1001',
-      business_name: 'Acme Solutions Ltd',
-      business_username: 'acmesolutions',
-      email: 'admin@acmesolutions.rw',
-      phone: '+250722987654',
-      country: 'Rwanda',
-      business_type: 'RESELLER',
-      account_status: 'active',
-      created_at: '2023-06-10T08:15:00Z',
-      updated_at: '2024-12-04T14:22:00Z',
-      contact_person: 'John Doe',
-      company_size: '25-50',
-      industry: 'Technology',
-      tax_id: 'TAX-001234567',
-      registration_number: 'REG-98765432',
-    };
-    this.profiles.set('AC_RESELLER_1001', resellerProfile);
-
-    // Platform admin profile
-    const platformProfile: UserProfile = {
-      sid: 'AC_PLATFORM_001',
-      business_name: 'WeCall SMS Platform',
-      business_username: 'wecall_admin',
-      email: 'admin@wecall.com',
-      phone: '+250788123456',
-      country: 'Rwanda',
-      business_type: 'PLATFORM_ADMIN',
-      account_status: 'active',
-      created_at: '2023-01-01T00:00:00Z',
-      updated_at: '2024-12-04T14:22:00Z',
+    // Platform account
+    const platform = wecallMockData.platform_account;
+    this.profiles.set(platform.account_sid, {
+      sid: platform.account_sid,
+      business_name: platform.name,
+      business_username: platform.name.toLowerCase().replace(/\s+/g, '_'),
+      email: 'admin@wecall.test',
+      phone: '+250788000000',
+      country: platform.country,
+      business_type: platform.type,
+      account_status: platform.status,
+      created_at: now,
+      updated_at: now,
       contact_person: 'System Administrator',
-    };
-    this.profiles.set('AC_PLATFORM_001', platformProfile);
+    });
+
+    // Resellers and their clients
+    wecallMockData.resellers.forEach((reseller) => {
+      this.profiles.set(reseller.account_sid, {
+        sid: reseller.account_sid,
+        business_name: reseller.name,
+        business_username: reseller.business_username,
+        email: `${reseller.business_username}@wecall.test`,
+        phone: '+250700000000',
+        country: 'Rwanda',
+        business_type: reseller.type,
+        account_status: reseller.status,
+        created_at: reseller.created_at,
+        updated_at: now,
+        contact_person: `${reseller.name} Admin`,
+      });
+
+      reseller.clients.forEach((client) => {
+        this.profiles.set(client.account_sid, {
+          sid: client.account_sid,
+          business_name: client.name,
+          business_username: client.business_username,
+          email: `${client.business_username}@${reseller.business_username}.test`,
+          phone: '+250711111111',
+          country: 'Rwanda',
+          business_type: client.type,
+          account_status: client.status,
+          created_at: client.created_at,
+          updated_at: now,
+          contact_person: `${client.name} Admin`,
+        });
+      });
+    });
   }
 
   async getProfile(sidOrRole: string): Promise<UserProfile> {
     // Map roles to test SIDs
     let sid = sidOrRole;
-    if (sidOrRole === 'PLATFORM_ADMIN') sid = 'AC_PLATFORM_001';
-    if (sidOrRole === 'RESELLER_ADMIN') sid = 'AC_RESELLER_1001';
-    if (sidOrRole === 'CLIENT_ADMIN') sid = 'AC_CLIENT_001';
+    if (sidOrRole === 'PLATFORM_ADMIN') sid = wecallMockData.platform_account.account_sid;
+    if (sidOrRole === 'RESELLER_ADMIN') sid = wecallMockData.resellers[0]?.account_sid ?? sid;
+    if (sidOrRole === 'CLIENT_ADMIN') sid = wecallMockData.resellers[0]?.clients[0]?.account_sid ?? sid;
 
     const profile = this.profiles.get(sid);
     if (!profile) {
@@ -109,18 +110,27 @@ class MockProfileAdapter {
 
     // Return different stats based on account type
     if (profile.business_type === 'CLIENT') {
+      const reseller = wecallMockData.resellers.find((r) =>
+        r.clients.some((c) => c.account_sid === sid)
+      );
+      const client = reseller?.clients.find((c) => c.account_sid === sid);
+      const wallet = wecallMockData.billing.wallets.find((w) => w.business_sid === sid);
+
       return {
-        total_sms_sent: 4328,
-        total_cost: 145.92,
-        account_balance: 320.50,
+        total_sms_sent: client?.sms_usage.this_month_outbound ?? 0,
+        total_cost: (client?.sms_usage.this_month_outbound ?? 0) * 0.018,
+        account_balance: wallet?.balance ?? client?.billing.wallet_balance ?? 0,
       };
     } else if (profile.business_type === 'RESELLER') {
+      const reseller = wecallMockData.resellers.find((r) => r.account_sid === sid);
+      const wallet = wecallMockData.billing.wallets.find((w) => w.business_sid === sid);
+
       return {
-        total_sms_sent: 125400,
-        total_cost: 2156.80,
-        account_balance: 5000.00,
-        active_clients: 12,
-        active_sub_resellers: 3,
+        total_sms_sent: reseller?.sms_usage.this_month_outbound ?? 0,
+        total_cost: (reseller?.sms_usage.this_month_outbound ?? 0) * 0.018,
+        account_balance: wallet?.balance ?? reseller?.billing.wallet_balance ?? 0,
+        active_clients: reseller?.clients.length ?? 0,
+        active_sub_resellers: 0,
       };
     } else {
       return {

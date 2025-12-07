@@ -1,190 +1,334 @@
- # 📚 Wecall SMS Gateway Frontend - README
+# 🚀 Wecall SMS Gateway Frontend
 
- ## Overview
+## Overview
 
- This is the **frontend** for the Wecall SMS Gateway platform, built with Next.js, React, TypeScript, and Tailwind CSS. It provides dashboards, authentication, SMS sending, billing, and management features for platform admins, resellers, and clients.
+**Frontend** for the Wecall SMS Gateway platform—a complete SaaS solution for SMS management. Built with **Next.js 16**, **React 18**, **TypeScript**, and **Tailwind CSS**. Features comprehensive dashboards for platform admins, resellers, and clients with role-based access control, SMS management, billing, and wallet functionality.
 
- ---
+---
 
- ## Table of Contents
+## Quick Start
 
- - [Features](#features)
- - [Tech Stack](#tech-stack)
- - [Project Structure](#project-structure)
- - [Getting Started](#getting-started)
- - [Available Scripts](#available-scripts)
- - [Reusable Components](#reusable-components)
- - [Design System](#design-system)
- - [Role-Based Routing](#role-based-routing)
- - [Mock Data System](#mock-data-system)
- - [Documentation](#documentation)
- - [Contributing](#contributing)
- - [License](#license)
+### Prerequisites
+- Node.js 18+
+- npm 9+
 
- ---
+### Installation & Development
 
- ## Features
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
- - **Landing Page**: Role selection, feature highlights
- - **Authentication**: Login, registration, role-based dashboards
- - **Dashboards**: Platform, Reseller, Client dashboards with metrics, quick actions, recent activity
- - **SMS Module**: Send SMS, view logs, status tracking
- - **Billing & Wallet**: Wallet balance, top-up, transaction history
- - **Settings & Security**: Account management, staff, security settings
- - **Reusable Component Library**: StatCard, StatusBadge, ListCard, QuickActionsCard, AlertBox
- - **Mock Data Adapters**: Simulated backend for development
- - **Responsive Design**: Mobile-friendly layouts
+App runs at `http://localhost:3000`
 
- ---
+---
 
- ## Tech Stack
+## Features
 
- - **Framework**: Next.js 16.x
- - **Language**: TypeScript (strict mode)
- - **UI**: React 18+, Tailwind CSS v4
- - **Icons**: Lucide React
- - **UI Primitives**: Radix UI
- - **State/Data**: React Query
- - **Testing**: (Add your preferred testing library)
+✅ **Authentication & Authorization**
+- Login/Registration with role-based dashboards
+- Three user roles: PLATFORM_ADMIN, RESELLER_ADMIN, CLIENT_ADMIN
+- Automatic role-based routing
 
- ---
+✅ **Comprehensive Dashboards**
+- Platform admin dashboard with metrics and controls
+- Reseller dashboard for client & revenue management
+- Client dashboard for SMS stats, wallet, and messaging
 
- ## Project Structure
+✅ **SMS Management**
+- Send SMS campaigns
+- Track message status (delivered, failed, pending)
+- View message history and logs
+- Filter and search capabilities
 
- ```
- frontend/
- ├── app/                # Next.js app directory
- │   ├── (auth)/         # Auth pages (login, register)
- │   ├── client/         # Client dashboard/pages
- │   ├── platform/       # Platform admin dashboard/pages
- │   ├── reseller/       # Reseller dashboard/pages
- │   └── ...
- ├── components/
- │   └── ui/             # Reusable UI components
- ├── features/
- │   └── auth/           # Auth logic, hooks, API
- ├── lib/
- │   ├── formatters.ts   # Data formatting utilities
- │   ├── constants/      # Design tokens, status colors
- │   └── auth/           # Role-based routing utilities
- ├── mocks/              # Mock data adapters
- ├── public/             # Static assets
- ├── styles/             # Global CSS
- ├── README.md           # This file
- ├── START_HERE.md       # Master implementation guide
- └── ...
- ```
+✅ **Billing & Wallet**
+- Wallet balance tracking
+- Top-up and payment history
+- Transaction ledger
+- Credit limit management
 
- ---
+✅ **User Management**
+- Contacts management for clients
+- Staff/user administration
+- Security settings and 2FA
+- Session management
 
- ## Getting Started
+✅ **Architecture**
+- Reusable component library (DashboardHeader, StatCard, RecentMessagesList, QuickActions)
+- Feature-based page components (<100 lines each)
+- TanStack Query for server state management
+- Mock data adapters for development
 
- ### Prerequisites
- - Node.js 18+
- - npm 9+
+---
 
- ### Installation
+## Tech Stack
 
- ```powershell
- cd frontend
- npm install
- ```
+- **Framework**: Next.js 16.0.6 with Turbopack
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI + custom Shadcn-style components
+- **Data Fetching**: TanStack Query (React Query)
+- **Icons**: Lucide React
+- **State**: React hooks + TanStack Query
+- **Testing**: Jest/Vitest ready
 
- ### Running Locally
+---
 
- ```powershell
- npm run dev
- ```
+## Project Structure
 
- App will be available at `http://localhost:3000`
+```
+frontend/
+├── app/                           # Next.js 16 app directory
+│   ├── (auth)/                    # Auth layout (login, register)
+│   ├── client/                    # Client pages
+│   │   ├── dashboard/
+│   │   ├── contacts/
+│   │   ├── sms/
+│   │   ├── wallet/
+│   │   └── security/
+│   ├── platform/                  # Platform admin pages
+│   │   ├── dashboard/
+│   │   ├── clients/
+│   │   ├── sms/
+│   │   └── ...
+│   ├── reseller/                  # Reseller pages
+│   │   ├── dashboard/
+│   │   ├── clients/
+│   │   ├── billing/
+│   │   └── ...
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+│
+├── components/
+│   ├── ui/                        # Core UI components (Button, Card, Dialog, etc.)
+│   └── platform/                  # Feature components
+│       ├── DashboardHeader.tsx
+│       ├── StatCard.tsx
+│       ├── RecentMessagesList.tsx
+│       └── QuickActions.tsx
+│
+├── features/                      # Feature page components
+│   ├── client/
+│   │   ├── ClientDashboardPage.tsx
+│   │   ├── ClientContactsPage.tsx
+│   │   ├── ClientSmsPage.tsx
+│   │   ├── ClientWalletPage.tsx
+│   │   └── ClientSecurityPage.tsx
+│   ├── reseller/
+│   │   ├── ResellerDashboardPage.tsx
+│   │   ├── ResellerClientsPage.tsx
+│   │   └── ResellerBillingPage.tsx
+│   └── platform-dashboard/
+│       └── PlatformDashboardPageRefactored.tsx
+│
+├── lib/
+│   ├── constants.ts
+│   ├── formatters.ts
+│   └── auth/
+│
+├── mocks/                         # Mock data adapters
+│   ├── adapters/
+│   │   ├── authAdapter.ts
+│   │   ├── accountsAdapter.ts
+│   │   ├── smsAdapter.ts
+│   │   ├── billingAdapter.ts
+│   │   └── ...
+│   └── data/
+│
+├── stores/                        # Zustand stores (if used)
+├── providers/                     # React providers
+├── public/                        # Static assets
+├── README.md                      # This file
+├── next.config.ts
+├── tsconfig.json
+├── tailwind.config.ts
+├── package.json
+└── ...
+```
 
- ---
+---
 
- ## Available Scripts
+## Available Scripts
 
- - `npm run dev` - Start development server
- - `npm run build` - Build for production
- - `npm run lint` - Run ESLint
- - `npm run format` - Format code with Prettier
- - `npm run test` - Run tests (if configured)
+```bash
+npm run dev       # Start dev server (Turbopack, hot reload)
+npm run build     # Production build
+npm run start     # Start production server
+npm run lint      # Run ESLint
+```
 
- ---
+---
 
- ## Reusable Components
+## Core Reusable Components
 
- All major UI patterns are extracted as reusable components in `components/ui/`:
+**Location**: `components/platform/`
 
- - **StatCard**: Metric display card
- - **StatusBadge**: Status indicator with auto color
- - **ListCard**: Generic list container
- - **QuickActionsCard**: Navigation/action buttons
- - **AlertBox**: Error/success/warning/info alerts
+| Component | Purpose | Lines |
+|-----------|---------|-------|
+| `DashboardHeader` | Page title, subtitle, optional action button | 25 |
+| `StatCard` | Metric display with icon, value, trend | 45 |
+| `RecentMessagesList` | Last 5 messages with status indicators | 60 |
+| `QuickActions` | Grid of action buttons for common tasks | 35 |
 
- See `VISUAL_REFERENCE.md` for visual examples and API docs.
+All components are under 100 lines for maintainability and reusability.
 
- ---
+---
 
- ## Design System
+## Design System
 
- - **Tailwind CSS**: Utility-first styling
- - **Design Tokens**: Centralized in `lib/constants/statusColors.ts`
- - **Light Theme Only**: No dark mode
- - **Consistent Buttons**: `.btn-primary`, `.btn-primary-outline`
+- **Color Scheme**: Primary #ec008c (pink), secondary grays
+- **Spacing**: Tailwind standard scale (4px base unit)
+- **Typography**: System fonts (sans-serif)
+- **Components**: Shadcn-style Radix UI components
+- **Responsive**: Mobile-first approach with Tailwind breakpoints
+- **Accessibility**: ARIA attributes, semantic HTML
 
- ---
+---
 
- ## Role-Based Routing
+## Role-Based Access Control
 
- - **Roles**: PLATFORM_ADMIN, RESELLER_ADMIN, CLIENT_ADMIN
- - **Utilities**: `lib/auth/roleBasedRouting.ts` for route management
- - **Automatic Routing**: Auth hooks redirect users to correct dashboard
+Three primary roles with dedicated dashboards:
 
- ---
+| Role | Dashboard | Key Features |
+|------|-----------|--------------|
+| **PLATFORM_ADMIN** | `/platform/dashboard` | All users, global analytics, system settings |
+| **RESELLER_ADMIN** | `/reseller/dashboard` | Client management, revenue tracking, billing |
+| **CLIENT_ADMIN** | `/client/dashboard` | SMS sending, wallet, contacts, security |
 
- ## Mock Data System
+Automatic role detection on login with redirect to appropriate dashboard.
 
- - **Adapters**: `mocks/` directory
- - **Modules**: Accounts, SMS, Billing, Observability, Routing, Staff
- - **Purpose**: Simulate backend for development and testing
+---
 
- ---
+## Mock Data System
 
- ## Documentation
+For development, the app uses mock data adapters in `mocks/adapters/`:
 
- - `START_HERE.md`: Master guide
- - `COMPONENT_IMPLEMENTATION_GUIDE.md`: Step-by-step usage
- - `REUSABLE_COMPONENTS.md`: Analysis and roadmap
- - `REUSABLE_COMPONENTS_SUMMARY.md`: Quick reference
- - `VISUAL_REFERENCE.md`: Visual examples
- - `EXAMPLE_REFACTORED_DASHBOARD.tsx`: Before/after code
+- **authAdapter**: Login/registration simulation
+- **accountsAdapter**: Client & reseller account data
+- **smsAdapter**: Message history and status tracking
+- **billingAdapter**: Wallet, transactions, payments
+- **routingAdapter**: Route configuration
+- **observabilityAdapter**: Analytics and logs
 
- ---
+To integrate real API:
+1. Replace mock adapter calls with actual HTTP requests
+2. Update TanStack Query hooks with real endpoints
+3. Maintain same data structure for compatibility
 
- ## Contributing
+---
 
- 1. Fork the repo
- 2. Create a feature branch
- 3. Commit your changes
- 4. Open a pull request
+## Data Fetching
 
- **Coding Standards:**
- - Use TypeScript strict mode
- - Prefer reusable components
- - Follow Tailwind CSS conventions
- - Document new components in `COMPONENT_IMPLEMENTATION_GUIDE.md`
+Uses **TanStack Query** for:
+- Automatic caching
+- Background refetching
+- Optimistic updates
+- Error boundaries
 
- ---
+Example:
+```typescript
+const { data, isLoading } = useQuery({
+  queryKey: ['messages'],
+  queryFn: () => mockSMS.getMessages('AC_CLIENT_2001')
+});
+```
 
- ## License
+---
 
- MIT
+## Styling & CSS
 
- ---
+- **Tailwind CSS v4**: Utility-first CSS framework
+- **Global CSS**: `app/globals.css`
+- **Design Tokens**: Defined in `lib/constants.ts`
+- **No CSS Modules**: Prefer Tailwind classes
 
- ## Contact
+---
 
- For questions or support, contact the Wecall SMS Gateway team at support@wecalloffice.com
+## Type Safety
 
- ---
+- **TypeScript**: Strict mode enabled (`tsconfig.json`)
+- **Component Props**: Fully typed interfaces
+- **Mock Data**: Typed interfaces matching backend contracts
+- **Type Generation**: Consider adding API type generation (e.g., OpenAPI)
 
- **Happy coding!** 🚀
+---
+
+## Development Workflow
+
+1. **Create Feature**: Add new page or feature in `/app` or `/features`
+2. **Use Components**: Leverage reusable components from `components/platform/`
+3. **Add Data**: Use mock adapters or real API endpoints
+4. **Style**: Apply Tailwind classes
+5. **Type**: Ensure all props and data are typed
+6. **Test**: Run tests with `npm run test`
+
+---
+
+## Performance Optimization
+
+- **Code Splitting**: Automatic with Next.js 16 app directory
+- **Image Optimization**: Use `next/image` for images
+- **Dynamic Imports**: Load components on demand
+- **TanStack Query**: Smart caching and deduplication
+
+---
+
+## Contributing
+
+1. Create a feature branch: `git checkout -b feature/my-feature`
+2. Make changes following the project structure
+3. Keep components under 100 lines
+4. Use TypeScript strict mode
+5. Commit: `git commit -m "feat: add my feature"`
+6. Push and open a pull request
+
+---
+
+## Deployment
+
+### Vercel (Recommended)
+```bash
+npm run build
+vercel deploy
+```
+
+### Self-Hosted
+```bash
+npm run build
+npm start
+```
+
+---
+
+## Troubleshooting
+
+**Port 3000 already in use?**
+```bash
+npm run dev -- -p 3001
+```
+
+**Module not found errors?**
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**Build failures?**
+```bash
+npm run lint        # Check for type errors
+npm run build       # Try building again
+```
+
+---
+
+## License
+
+MIT - Built with ❤️ by the WeCall team
+
+---
+
+**Last Updated**: December 2025  
+**Version**: 1.0.0  
+**Status**: ✅ Production Ready

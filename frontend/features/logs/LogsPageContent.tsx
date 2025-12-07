@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { FileText, Activity, AlertCircle, Database, Download } from "lucide-react";
 import LogsFilters from "@/components/LogsFilters";
-import StatCard from "@/components/StatCard";
+import { StatCard } from "@/components/platform/StatCard";
 import LogsTable from "@/components/LogsTable";
 import { mockObservability } from "@/mocks/adapters/mockObservability";
 
@@ -33,8 +33,16 @@ export default function LogsPageContent() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const events = await mockObservability.listEvents();
-        const mappedLogs = events.slice(0, 50).map((e: any, i: number) => ({ ...e, id: e.sid || `log_${i}` }));
+        const events = await mockObservability.events();
+        const mappedLogs = events.slice(0, 50).map((e: any, i: number) => ({
+          id: e.sid || `log_${i}`,
+          event_type: e.type?.toLowerCase() || 'event',
+          user_sid: e.actor || e.message_sid || 'system',
+          ip_address: e.ip || 'N/A',
+          status: e.status || e.action || 'info',
+          timestamp: e.timestamp,
+          raw: e,
+        }));
         setLogs(mappedLogs);
         setFilteredLogs(mappedLogs);
       } catch (error) {
@@ -95,10 +103,10 @@ export default function LogsPageContent() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <StatCard label="Total Events" value={logs.length} icon={<FileText size={32} className="text-primary" />} />
-        <StatCard label="SMS Sent" value={logs.filter(l => l.event_type === 'sms_sent').length} icon={<Activity size={32} className="text-blue-600" />} />
-        <StatCard label="API Requests" value={logs.filter(l => l.event_type === 'api_request').length} icon={<Database size={32} className="text-green-600" />} />
-        <StatCard label="Errors" value={logs.filter(l => l.event_type === 'error').length} icon={<AlertCircle size={32} className="text-red-600" />} />
+        <StatCard title="Total Events" value={logs.length} icon={<FileText size={32} className="text-primary" />} />
+        <StatCard title="SMS Sent" value={logs.filter(l => l.event_type === 'sms_sent').length} icon={<Activity size={32} className="text-blue-600" />} />
+        <StatCard title="API Requests" value={logs.filter(l => l.event_type === 'api_request').length} icon={<Database size={32} className="text-green-600" />} />
+        <StatCard title="Errors" value={logs.filter(l => l.event_type === 'error').length} icon={<AlertCircle size={32} className="text-red-600" />} />
       </div>
 
       <LogsTable logs={logs} filteredLogs={filteredLogs} loading={loading} getBadgeClasses={getBadgeClasses} />

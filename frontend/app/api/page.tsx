@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import MainLayout from '@/components/layout/MainLayout';
-import { Key, Shield, Copy, Eye, EyeOff } from 'lucide-react';
+import { ClientSmsPage } from '@/features/client/ClientSmsPage';
 
-export default function ClientApiPage() {
-  const [showKey, setShowKey] = useState(false);
-  const [apiKey] = useState('wc_prod_abc123def456ghi789jkl012mno345');
+export default function Page() {
+  return <ClientSmsPage />;
+}
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(apiKey);

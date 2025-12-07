@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import ClientDashboardPage from "@/features/reseller-Dashboard/resellerDashboardPage";
+import { ResellerDashboardPage } from '@/features/reseller/ResellerDashboardPage';
 
 export default function Page() {
-  return <ClientDashboardPage />;
+  return <ResellerDashboardPage />;
 }

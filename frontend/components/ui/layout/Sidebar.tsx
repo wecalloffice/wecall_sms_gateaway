@@ -5,45 +5,67 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// 1. Define allowed roles
-type Role = "admin" | "reseller" | "client";
+type Role = "PLATFORM" | "RESELLER" | "CLIENT";
 
-// 2. Define the menu item structure
 interface MenuItem {
   label: string;
   href: string;
-  roles: Role[]; // permissions
+  roles: Role[];
 }
 
-// 3. Unified menu list with permissions
-const menuConfig: MenuItem[] = [
-  { label: "Dashboard", href: "/client/dashboard", roles: ["admin", "reseller", "client"] },
-  { label: "SMS", href: "/client/sms", roles: ["admin", "reseller", "client"] },
-  { label: "Logs", href: "/client/logs", roles: ["admin", "reseller", "client"] },
-  { label: "Contacts", href: "/client/contacts", roles: ["admin", "reseller", "client"] },
-  { label: "Groups", href: "/groups", roles: ["admin", "reseller", "client"] },
-  { label: "Resellers", href: "/resellers", roles: ["admin"] },
-  { label: "Clients", href: "/clients", roles: ["admin", "reseller"] },
-  { label: "Reports", href: "/reports", roles: ["admin", "reseller"] },
-  { label: "Billing", href: "/billing", roles: ["admin", "reseller", "client"] },
-  { label: "Settings", href: "/settings", roles: ["admin", "reseller", "client"] },
-  { label: "Audits", href: "/audits", roles: ["admin"] },
+// CLIENT menu items
+const clientMenuConfig: MenuItem[] = [
+  { label: "Dashboard", href: "/client/dashboard", roles: ["CLIENT"] },
+  { label: "SMS", href: "/client/sms", roles: ["CLIENT"] },
+  { label: "Logs", href: "/client/sms-logs", roles: ["CLIENT"] },
+  { label: "Contacts", href: "/client/contacts", roles: ["CLIENT"] },
+  { label: "Wallet", href: "/client/wallet", roles: ["CLIENT"] },
+  { label: "Settings", href: "/client/settings", roles: ["CLIENT"] },
+  { label: "Profile", href: "/client/profile", roles: ["CLIENT"] },
 ];
 
-export default function Sidebar({ role = "admin" }: { role: Role }) {
-  const pathname = usePathname();
+// RESELLER menu items
+const resellerMenuConfig: MenuItem[] = [
+  { label: "Dashboard", href: "/reseller/dashboard", roles: ["RESELLER"] },
+  { label: "SMS", href: "/reseller/sms", roles: ["RESELLER"] },
+  { label: "Logs", href: "/reseller/dlr", roles: ["RESELLER"] },
+  { label: "Contacts", href: "/reseller/contacts", roles: ["RESELLER"] },
+  { label: "Clients", href: "/reseller/clients", roles: ["RESELLER"] },
+  { label: "Routing", href: "/reseller/routing", roles: ["RESELLER"] },
+  { label: "Branding", href: "/reseller/branding", roles: ["RESELLER"] },
+  { label: "Settings", href: "/reseller/settings", roles: ["RESELLER"] },
+  { label: "Profile", href: "/reseller/profile", roles: ["RESELLER"] },
+];
 
-  const menu = [
-    { label: "Dashboard", href: "/platform/dashboard" },
-    { label: "Resellers", href: "/platform/resellers" },
-    { label: "Clients", href: "/platform/clients" },
-    { label: "Billing", href: "/platform/billing" },  // <-- ADD THIS
-  ];
-  // 4. Filter menu by permissions
+// PLATFORM menu items
+const platformMenuConfig: MenuItem[] = [
+  { label: "Dashboard", href: "/platform/dashboard", roles: ["PLATFORM"] },
+  { label: "SMS", href: "/platform/sms", roles: ["PLATFORM"] },
+  { label: "Logs", href: "/platform/logs", roles: ["PLATFORM"] },
+  { label: "Users", href: "/platform/users", roles: ["PLATFORM"] },
+  { label: "Resellers", href: "/platform/clients", roles: ["PLATFORM"] },
+  { label: "Billing", href: "/platform/billing", roles: ["PLATFORM"] },
+  { label: "Routing", href: "/platform/routing", roles: ["PLATFORM"] },
+  { label: "DLR", href: "/platform/dlr", roles: ["PLATFORM"] },
+  { label: "Security", href: "/platform/security", roles: ["PLATFORM"] },
+  { label: "API", href: "/platform/api", roles: ["PLATFORM"] },
+  { label: "Settings", href: "/platform/settings", roles: ["PLATFORM"] },
+  { label: "Profile", href: "/platform/profile", roles: ["PLATFORM"] },
+];
+
+// Combine all configs
+const menuConfig: MenuItem[] = [
+  ...clientMenuConfig,
+  ...resellerMenuConfig,
+  ...platformMenuConfig,
+];
+
+export default function Sidebar({ role = "CLIENT" }: { role: Role }) {
+  const pathname = usePathname();
   const allowedMenu = menuConfig.filter((item) => item.roles.includes(role));
 
   return (
-    <aside className="w-64 bg-primary text-white h-screen p-5">
+    <aside className="w-64 bg-primary text-white h-screen p-5 sticky top-0">
       <h1 className="text-2xl font-bold mb-6">WeCall</h1>
 
       <nav className="space-y-2">
@@ -52,7 +74,7 @@ export default function Sidebar({ role = "admin" }: { role: Role }) {
             key={item.href}
             href={item.href}
             className={`block px-3 py-2 rounded-lg transition ${
-              pathname === item.href ? "bg-gray-700" : "hover:bg-gray-800"
+              pathname.includes(item.href) ? "bg-gray-700 font-semibold" : "hover:bg-gray-800"
             }`}
           >
             {item.label}

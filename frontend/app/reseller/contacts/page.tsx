@@ -1,1 +1,7 @@
-export { default } from "@/features/contacts/ContactsPage";
+'use client';
+
+import { ClientContactsPage } from '@/features/client/ClientContactsPage';
+
+export default function Page() {
+  return <ClientContactsPage />;
+}

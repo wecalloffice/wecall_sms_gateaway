@@ -1,1 +1,7 @@
-export { default } from "@/features/wallet/WalletPage";
+'use client';
+
+import { ClientWalletPage } from '@/features/client/ClientWalletPage';
+
+export default function Page() {
+  return <ClientWalletPage />;
+}

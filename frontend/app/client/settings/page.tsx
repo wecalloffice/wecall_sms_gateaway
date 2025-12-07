@@ -1,1 +1,7 @@
-export { default } from "@/features/settings/SettingsPage";
+'use client';
+
+import { ClientSecurityPage } from '@/features/client/ClientSecurityPage';
+
+export default function Page() {
+  return <ClientSecurityPage />;
+}
